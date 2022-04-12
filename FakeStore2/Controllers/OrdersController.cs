@@ -30,11 +30,20 @@ namespace FakeStore2.Controllers
             return View(orderViewModel);
         }
 
-        // GET: Orders/Costumer/Id
+        // GET: Orders/CostumerOrders/Id
+        [HttpGet]
         public ActionResult CostumerOrders(int id)
         {
             var orders = db.Orders.Where(o => o.CostumerId == id).ToList();
             return View(orders);
+        }
+
+        // GET: Orders/CostumerOrdersTest/Id
+        [HttpGet]
+        public JsonResult CostumerOrdersTest(int id)
+        {
+            var orders = db.Orders.Where(o => o.CostumerId == id).Select(o => new Models.OrdersModel() { CostumerId = o.CostumerId, OrderDate = o.OrderDate, OrderId = o.OrderId, Total = o.Total }).ToList();
+            return Json(orders,JsonRequestBehavior.AllowGet);
         }
 
         // GET: Orders/Details/5
