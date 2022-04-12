@@ -5,8 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>CostumerOrders</h2>
-
+<h2>Costumer Orders</h2>
+<br/>
 <table class="table">
     <tr>
         <th>
@@ -43,7 +43,7 @@
 
 </table>
 <br />
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+<a>
+    @Html.ActionLink("Create New", "Create",null, new {@class="btn btn-success"})
+</a>
 

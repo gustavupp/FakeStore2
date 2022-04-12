@@ -1,15 +1,12 @@
 ﻿@model IEnumerable<FakeStore2.Persistence.Costumer>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Costumers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+<h2>@ViewBag.Title</h2>
+<br/>
 <table class="table">
     <tr>
         <th>
@@ -50,3 +47,7 @@
 }
 
 </table>
+
+<a>
+    @Html.ActionLink("Create New", "Create", null, new {@class="btn btn-success"})
+</a>

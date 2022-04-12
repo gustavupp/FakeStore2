@@ -1,12 +1,11 @@
 ﻿@model FakeStore2.ViewModel.OrdersViewModel
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Orders";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
-
+<h2>@ViewBag.Title</h2>
 <br/>
 <div>
     @Html.DropDownListFor(cn => cn.Costumers, new SelectList(Model.Costumers, "CostumerId", "FirstName"), " Select Customer", new {@class = "form-control"})
@@ -49,6 +48,6 @@
 
 </table>
 <br />
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+<a>
+    @Html.ActionLink("Create New", "Create", null, new { @class="btn btn-success" })
+</a>
