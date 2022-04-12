@@ -1,0 +1,12 @@
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\bin\Debug\FakeStore2.Persistence.dll.config
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\bin\Debug\FakeStore2.Persistence.dll
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\bin\Debug\FakeStore2.Persistence.pdb
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\bin\Debug\EntityFramework.dll
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\bin\Debug\EntityFramework.SqlServer.dll
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\bin\Debug\EntityFramework.xml
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\bin\Debug\EntityFramework.SqlServer.xml
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\obj\Debug\FakeStore2.Persistence.csproj.AssemblyReference.cache
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\obj\Debug\FakeStore2.Persistence.csproj.CoreCompileInputs.cache
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\obj\Debug\FakeStore2.Persistence.csproj.CopyComplete
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\obj\Debug\FakeStore2.Persistence.dll
+D:\CODE\.NET\FakeStore2\FakeStore2.Persistence\obj\Debug\FakeStore2.Persistence.pdb

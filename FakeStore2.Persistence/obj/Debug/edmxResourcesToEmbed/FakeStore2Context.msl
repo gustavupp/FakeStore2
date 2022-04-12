@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="FakeStore2ModelStoreContainer" CdmEntityContainer="FakeStore2Entities">
+    <EntitySetMapping Name="Costumers">
+      <EntityTypeMapping TypeName="FakeStore2Model.Costumer">
+        <MappingFragment StoreEntitySet="Costumers">
+          <ScalarProperty Name="CostumerSince" ColumnName="CostumerSince" />
+          <ScalarProperty Name="isActive" ColumnName="isActive" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="CostumerId" ColumnName="CostumerId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Orders">
+      <EntityTypeMapping TypeName="FakeStore2Model.Order">
+        <MappingFragment StoreEntitySet="Orders">
+          <ScalarProperty Name="Total" ColumnName="Total" />
+          <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
+          <ScalarProperty Name="CostumerId" ColumnName="CostumerId" />
+          <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
