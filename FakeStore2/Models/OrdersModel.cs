@@ -10,9 +10,9 @@ namespace FakeStore2.Models
     {
         public int OrderId { get; set; }
         public int CostumerId { get; set; }
-        public System.DateTime OrderDate { get; set; }
+        public string OrderDate { get; set; }
         public decimal Total { get; set; }
 
-        public virtual Costumer Costumer { get; set; }
+        public string Costumer { get; set; }
     }
 }

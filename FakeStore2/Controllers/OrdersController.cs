@@ -34,17 +34,11 @@ namespace FakeStore2.Controllers
         [HttpGet]
         public ActionResult CostumerOrders(int id)
         {
-            var orders = db.Orders.Where(o => o.CostumerId == id).ToList();
-            return View(orders);
+                var orders = db.Orders.Where(o => o.CostumerId == id).ToList();
+                return View(orders);
         }
 
-        // GET: Orders/CostumerOrdersTest/Id
-        [HttpGet]
-        public JsonResult CostumerOrdersTest(int id)
-        {
-            var orders = db.Orders.Where(o => o.CostumerId == id).Select(o => new Models.OrdersModel() { CostumerId = o.CostumerId, OrderDate = o.OrderDate, OrderId = o.OrderId, Total = o.Total }).ToList();
-            return Json(orders,JsonRequestBehavior.AllowGet);
-        }
+       
 
         // GET: Orders/Details/5
         public ActionResult Details(int? id)
@@ -70,8 +64,6 @@ namespace FakeStore2.Controllers
         }
 
         // POST: Orders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "OrderId,CostumerId,OrderDate,Total")] Order order)

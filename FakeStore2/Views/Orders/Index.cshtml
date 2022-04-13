@@ -7,49 +7,64 @@
 
 <h2>@ViewBag.Title</h2>
 <br />
+<div class="form-group">
+    @Html.LabelFor(cn => cn.Costumers)
+    @Html.DropDownListFor(cn => cn.Costumers, new SelectList(Model.Costumers, "CostumerId", "FirstName"), "All Costumers", new { @class = "form-control", id = "customerDropdown" })
+</div>
 
-    <div>
-        @Html.DropDownListFor(cn => cn.Costumers, new SelectList(Model.Costumers, "CostumerId", "FirstName"),"Select Costumer", new { @class="form-control", id="customerDropdown" })
-    </div>
 
-<br />
-<br />
-
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Orders)
-        </th>
-        <th>
-            Total
-        </th>
-        <th>
-            Names
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model.Orders)
-    {
+@*<table class="table">
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Total)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Costumer.FirstName)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.OrderId }) |
-                @Html.ActionLink("Details", "Details", new { id = item.OrderId }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.OrderId })
-            </td>
+            <th>
+                @Html.DisplayNameFor(model => model.Orders)
+            </th>
+            <th>
+                Total
+            </th>
+            <th>
+                Names
+            </th>
+            <th></th>
         </tr>
-    }
 
-</table>
+        @foreach (var item in Model.Orders)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Costumer.FirstName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.OrderId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.OrderId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.OrderId })
+                </td>
+            </tr>
+        }
+
+    </table>*@
+
+<br />
+<div>
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Orders</th>
+                <th>Total</th>
+                <th>Names</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="js-costumer-table">
+        </tbody>
+    </table>
+</div>
+
 <br />
 <a>
     @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
@@ -58,15 +73,52 @@
 @section scripts{
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            let dropdownList = document.querySelector('#customerDropdown');
-            dropdownList.addEventListener("change", function () {
+            const dropdownList = document.querySelector('#customerDropdown');
+            const jsTable = document.querySelector('.js-costumer-table');
 
-                fetch(`Orders/CostumerOrdersTest/${dropdownList.value}`)
-                    .then(result => result.json())
-                    .then(data => console.log(data))
-                    .catch(err => console.log(err))
-           
-            })
+            let url = "https://localhost:44372/Api/Orders";
+
+            //declare fetch function
+            const fetchOrders = async (url) => {
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    return data;
+
+                } catch (err) {
+                    throw err;
+                }
+            };
+
+            //declare tableContents function: returns the table content
+            let tableContents = (obj) => {
+                let result = obj.map(item => {
+                    return `<tr>
+                                <td>${item.OrderDate}</td>
+                                <td>$${item.Total}</td>
+                                <td>${item.Costumer}</td>
+                                <td>
+                                    <a href='https://localhost:44372/Orders/Edit/${item.OrderId}' alt="Edit">Edit</a> |
+                                    <a href='https://localhost:44372/Orders/Details/${item.OrderId}' alt="details">Details</> |
+                                    <a href='https://localhost:44372/Orders/Delete/${item.OrderId}' alt="Delete">Delete</a>
+                                </td>
+                            </tr>`;
+                })
+                return result;
+            };
+
+            //call fetchOrders without id to get all orders as soon as DOM loads
+            fetchOrders(url).then(data => {
+                jsTable.innerHTML = tableContents(data);
+
+                //then fetch orders of individual customer onchange
+                dropdownList.addEventListener("change", function () {
+
+                    fetchOrders(`${url}/${dropdownList.value}`).then(data => {
+                        jsTable.innerHTML = tableContents(data);
+                    })
+                });
+            });
         });
     </script>
-    }
+}
