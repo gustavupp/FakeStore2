@@ -8,7 +8,7 @@ namespace FakeStore2.ViewModel
 {
     public class OrdersViewModel
     {
-        public IEnumerable<Order> Orders { get; set; }
-        public IEnumerable<Costumer> Costumers { get; set; }
+        public IEnumerable<Models.OrdersModel> Orders { get; set; }
+        public IEnumerable<Models.CustomerModel> Costumers { get; set; }
     }
 }

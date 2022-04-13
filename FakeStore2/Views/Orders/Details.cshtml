@@ -1,4 +1,4 @@
-﻿@model FakeStore2.Persistence.Order
+﻿@model FakeStore2.Models.OrdersModel
 
 @{
     ViewBag.Title = "Details";
@@ -27,11 +27,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Costumer.FirstName)
+            @Html.DisplayNameFor(model => model.Costumer)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Costumer.FirstName)
+            @Html.DisplayFor(model => model.Costumer)
         </dd>
 
     </dl>

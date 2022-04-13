@@ -12,7 +12,7 @@ namespace FakeStore2.Models
         public int CostumerId { get; set; }
         public string OrderDate { get; set; }
         public decimal Total { get; set; }
-
         public string Costumer { get; set; }
+
     }
 }

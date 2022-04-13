@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FakeStore2.Persistence.Order>
+﻿@model IEnumerable<FakeStore2.Models.OrdersModel>
 
 @{
     ViewBag.Title = "CostumerOrders";
@@ -31,7 +31,7 @@
                 @Html.DisplayFor(modelItem => item.Total)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Costumer.FirstName)
+                @Html.DisplayFor(modelItem => item.Costumer)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.OrderId }) |

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using FakeStore2.Models;
 using FakeStore2.Persistence;
 using FakeStore2.ViewModel;
 
@@ -18,8 +19,29 @@ namespace FakeStore2.Controllers
         // GET: All Orders
         public ActionResult Index()
         {
-            var orders = db.Orders.Include(o => o.Costumer).ToList();
-            var costumers = db.Costumers.Include(c => c.Orders).ToList();
+            var orders = db.Orders
+                .Include(o => o.Costumer)
+                .Select(o => new Models.OrdersModel() 
+            {
+            Costumer = o.Costumer.FirstName,
+            CostumerId = o.CostumerId,
+            OrderDate = o.OrderDate.ToString(),
+            OrderId = o.OrderId,
+            Total = o.Total,
+            })
+                .ToList();
+
+            var costumers = db.Costumers
+                .Include(c => c.Orders)
+                .Select(c => new Models.CustomerModel()
+                { 
+                FirstName = c.FirstName,
+                LastName = c.LastName,
+                CostumerId = c.CostumerId,
+                CostumerSince = c.CostumerSince.ToString(),
+                isActive = c.isActive,
+                })
+                .ToList();
 
             var orderViewModel = new OrdersViewModel()
             {
@@ -34,7 +56,18 @@ namespace FakeStore2.Controllers
         [HttpGet]
         public ActionResult CostumerOrders(int id)
         {
-                var orders = db.Orders.Where(o => o.CostumerId == id).ToList();
+                var orders = db.Orders
+                .Where(o => o.CostumerId == id)
+                .Select(o => new Models.OrdersModel()
+                {
+                    Costumer = o.Costumer.FirstName,
+                    CostumerId = o.CostumerId,
+                    OrderDate = o.OrderDate.ToString(),
+                    OrderId = o.OrderId,
+                    Total = o.Total,
+                })
+                .ToList();
+
                 return View(orders);
         }
 
@@ -47,8 +80,18 @@ namespace FakeStore2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var sql = db.Orders.Where(x => x.OrderId == id);
-            var order = sql.SingleOrDefault();
+            var order = db.Orders
+                .Where(o => o.OrderId == id)
+                .Select(o => new OrdersModel() 
+                {
+                    Costumer = o.Costumer.FirstName,
+                    CostumerId = o.CostumerId,
+                    OrderDate = o.OrderDate.ToString(),
+                    OrderId = o.OrderId,
+                    Total = o.Total,
+                })
+                .SingleOrDefault(); ;
+
             if (order == null)
             {
                 return HttpNotFound();

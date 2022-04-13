@@ -65,6 +65,20 @@
     </table>
 </div>
 
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</nav>
+
 <br />
 <a>
     @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
@@ -78,7 +92,7 @@
 
             let url = "https://localhost:44372/Api/Orders";
 
-            //declare fetch function
+            //fetch function
             const fetchOrders = async (url) => {
                 try {
                     const response = await fetch(url);
@@ -90,7 +104,7 @@
                 }
             };
 
-            //declare tableContents function: returns the table content
+            //tableContents render function
             let tableContents = (obj) => {
                 let result = obj.map(item => {
                     return `<tr>
@@ -103,7 +117,7 @@
                                     <a href='https://localhost:44372/Orders/Delete/${item.OrderId}' alt="Delete">Delete</a>
                                 </td>
                             </tr>`;
-                })
+                }).join("");
                 return result;
             };
 
