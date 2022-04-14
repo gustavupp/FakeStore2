@@ -6,29 +6,43 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using FakeStore2.Models;
 using FakeStore2.Persistence;
 
 namespace FakeStore2.Controllers
 {
     public class CostumersController : Controller
     {
-        private FakeStore2Entities db = new FakeStore2Entities();
+        private FakeStore2Entities _context = new FakeStore2Entities();
 
         // GET: Costumers
+        [HttpGet]
         public ActionResult Index()
         {
 
-            return View(db.Costumers.ToList());
+            return View(_context.Costumers.ToList());
         }
 
         // GET: Costumers/Details/5
+        [HttpGet]
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Costumer costumer = db.Costumers.Find(id);
+
+            var costumer = _context.Costumers
+                .Where(c => c.CostumerId == id)
+                .Select(c => new CustomerModel()
+                {
+                    CostumerId = c.CostumerId,
+                    CostumerSince = c.CostumerSince.ToString(),
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                })
+                .FirstOrDefault();
+
             if (costumer == null)
             {
                 return HttpNotFound();
@@ -43,30 +57,42 @@ namespace FakeStore2.Controllers
         }
 
         // POST: Costumers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CostumerId,FirstName,LastName,isActive,CostumerSince")] Costumer costumer)
+        public ActionResult Create(Costumer costumer)
         {
             if (ModelState.IsValid)
             {
-                db.Costumers.Add(costumer);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                _context.Costumers.Add(costumer);
+                _context.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
             }
 
             return View(costumer);
         }
 
         // GET: Costumers/Edit/5
+        [HttpGet]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Costumer costumer = db.Costumers.Find(id);
+
+            var costumer = _context.Costumers
+                .Where(c => c.CostumerId == id)
+                .Select(c => new CustomerModel() 
+                {
+                    CostumerId = c.CostumerId,
+                    CostumerSince = c.CostumerSince.ToString(),
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                })
+                .FirstOrDefault();
+
+
             if (costumer == null)
             {
                 return HttpNotFound();
@@ -75,17 +101,24 @@ namespace FakeStore2.Controllers
         }
 
         // POST: Costumers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CostumerId,FirstName,LastName,isActive,CostumerSince")] Costumer costumer)
+        public ActionResult Edit(Costumer costumer)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(costumer).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                // _context.Entry(costumer).State = EntityState.Modified;
+                var editingCostumer = _context.Costumers
+                     .Where(c => c.CostumerId == costumer.CostumerId)
+                     .FirstOrDefault();
+                    
+                editingCostumer.FirstName = costumer.FirstName;
+                editingCostumer.LastName = costumer.LastName;
+                editingCostumer.isActive = costumer.isActive;
+                editingCostumer.CostumerSince = costumer.CostumerSince;
+
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
             }
             return View(costumer);
         }
@@ -97,7 +130,19 @@ namespace FakeStore2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Costumer costumer = db.Costumers.Find(id);
+
+            var costumer = _context.Costumers
+                .Where(c => c.CostumerId == id)
+                .Select(c => new CustomerModel()
+                {
+                    CostumerId = c.CostumerId,
+                    CostumerSince = c.CostumerSince.ToString(),
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    isActive = c.isActive,
+                })
+                .FirstOrDefault();
+
             if (costumer == null)
             {
                 return HttpNotFound();
@@ -110,17 +155,24 @@ namespace FakeStore2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Costumer costumer = db.Costumers.Find(id);
-            db.Costumers.Remove(costumer);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            bool hasOrders = _context.Orders.Any(o => o.Costumer.CostumerId == id);
+
+            if (hasOrders)
+            {
+                return Content("Cannot delete. Customer has orders under his name");
+            }
+
+            Costumer costumer = _context.Costumers.Find(id);
+            _context.Costumers.Remove(costumer); 
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                _context.Dispose();
             }
             base.Dispose(disposing);
         }

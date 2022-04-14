@@ -1,4 +1,4 @@
-﻿@model FakeStore2.Persistence.Costumer
+﻿@model FakeStore2.Models.CustomerModel
 
 @{
     ViewBag.Title = "Details";
@@ -52,7 +52,8 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.CostumerId }) |
-    @Html.ActionLink("Back to List", "Index") |
-    @Html.ActionLink("Orders", "CostumerOrders", "Orders", new { id = Model.CostumerId }, null)
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CostumerId }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Orders", "CostumerOrders", "Orders", new { id = Model.CostumerId }, new { @class = "btn btn-info"})
 </p>

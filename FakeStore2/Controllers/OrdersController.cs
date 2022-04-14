@@ -161,7 +161,13 @@ namespace FakeStore2.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Orders.Add(order);
+
+                var editingOrder = _context.Orders.FirstOrDefault(o => o.OrderId == order.OrderId);
+
+                editingOrder.OrderDate = order.OrderDate;
+                editingOrder.Total = order.Total;
+                editingOrder.CostumerId = order.CostumerId;
+
                 _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
