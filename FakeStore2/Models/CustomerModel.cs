@@ -1,18 +1,28 @@
-﻿using System;
+﻿using FakeStore2.Persistence;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 namespace FakeStore2.Models
 {
     public class CustomerModel
     {
-
         public int CostumerId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public bool isActive { get; set; }
-        public string CostumerSince { get; set; }
 
-        public virtual ICollection<OrdersModel> Orders { get; set; } = new HashSet<OrdersModel>();
+        [Required]
+        public string FirstName { get; set; }
+
+        [Required]
+        public string LastName { get; set; }
+
+        [Required]
+        public bool isActive { get; set; }
+
+        [Required]
+        public string CostumerSince { get; set; }
+        public int? OrdersCount { get; set; } 
+
+        public virtual ICollection<Order> Orders { get; set; } = new HashSet<Order>();
     }
 }

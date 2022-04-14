@@ -13,7 +13,6 @@
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>Costumer</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.CostumerId)
@@ -38,8 +37,8 @@
             @Html.LabelFor(model => model.isActive, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 <div class="checkbox">
-                    @Html.EditorFor(model => model.isActive)
                     @Html.ValidationMessageFor(model => model.isActive, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.isActive)
                 </div>
             </div>
         </div>
@@ -59,9 +58,9 @@
         </div>
     </div>
 }
-
+<br/>
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index", null, new {@class="btn btn-default"})
 </div>
 
 @section Scripts {

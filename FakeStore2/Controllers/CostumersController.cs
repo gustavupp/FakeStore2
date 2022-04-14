@@ -19,7 +19,6 @@ namespace FakeStore2.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-
             return View(_context.Costumers.ToList());
         }
 
@@ -40,6 +39,8 @@ namespace FakeStore2.Controllers
                     CostumerSince = c.CostumerSince.ToString(),
                     FirstName = c.FirstName,
                     LastName = c.LastName,
+                    isActive = c.isActive,
+                    OrdersCount = c.Orders.Count()
                 })
                 .FirstOrDefault();
 
@@ -61,15 +62,19 @@ namespace FakeStore2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Costumer costumer)
         {
-            if (ModelState.IsValid)
+            //ModelState.IsValid checks if the object passed in matches the expected object
+            if (!ModelState.IsValid)
+            {
+                return View(costumer);
+            }
+            
+            else
             {
                 _context.Costumers.Add(costumer);
                 _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(costumer);
         }
 
         // GET: Costumers/Edit/5
@@ -89,6 +94,8 @@ namespace FakeStore2.Controllers
                     CostumerSince = c.CostumerSince.ToString(),
                     FirstName = c.FirstName,
                     LastName = c.LastName,
+                    isActive = c.isActive,
+                    Orders = c.Orders,
                 })
                 .FirstOrDefault();
 
@@ -140,6 +147,7 @@ namespace FakeStore2.Controllers
                     FirstName = c.FirstName,
                     LastName = c.LastName,
                     isActive = c.isActive,
+                    OrdersCount = c.Orders.Count()
                 })
                 .FirstOrDefault();
 
@@ -155,14 +163,16 @@ namespace FakeStore2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            bool hasOrders = _context.Orders.Any(o => o.Costumer.CostumerId == id);
+            Costumer costumer = _context.Costumers.Find(id);
 
+            bool hasOrders = _context.Orders.Any(o => o.Costumer.CostumerId == id);
+            
             if (hasOrders)
             {
-                return Content("Cannot delete. Customer has orders under his name");
-            }
+                return Content("<h3>Cannot delete a customer who has orders. Delete the orders first.</h3>");
 
-            Costumer costumer = _context.Costumers.Find(id);
+            }
+            
             _context.Costumers.Remove(costumer); 
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
