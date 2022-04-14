@@ -14,12 +14,12 @@ namespace FakeStore2.Controllers
 {
     public class OrdersController : Controller
     {
-        private FakeStore2Entities db = new FakeStore2Entities();
+        private FakeStore2Entities _context = new FakeStore2Entities();
 
         // GET: All Orders
         public ActionResult Index()
         {
-            var orders = db.Orders
+            var orders = _context.Orders
                 .Include(o => o.Costumer)
                 .Select(o => new Models.OrdersModel() 
             {
@@ -31,7 +31,7 @@ namespace FakeStore2.Controllers
             })
                 .ToList();
 
-            var costumers = db.Costumers
+            var costumers = _context.Costumers
                 .Include(c => c.Orders)
                 .Select(c => new Models.CustomerModel()
                 { 
@@ -56,7 +56,7 @@ namespace FakeStore2.Controllers
         [HttpGet]
         public ActionResult CostumerOrders(int id)
         {
-                var orders = db.Orders
+                var orders = _context.Orders
                 .Where(o => o.CostumerId == id)
                 .Select(o => new Models.OrdersModel()
                 {
@@ -80,7 +80,7 @@ namespace FakeStore2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var order = db.Orders
+            var order = _context.Orders
                 .Where(o => o.OrderId == id)
                 .Select(o => new OrdersModel() 
                 {
@@ -102,24 +102,26 @@ namespace FakeStore2.Controllers
         // GET: Orders/Create
         public ActionResult Create()
         {
-            ViewBag.CostumerId = new SelectList(db.Costumers, "CostumerId", "FirstName");
+            //by using the ViewBag to send data to the View you don't have to create another class
+            ViewBag.CostumerId = new SelectList(_context.Costumers, "CostumerId", "FirstName");
+
             return View();
         }
 
         // POST: Orders/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "OrderId,CostumerId,OrderDate,Total")] Order order)
+        public ActionResult Create(Order order)
         {
             if (ModelState.IsValid)
             {
-                db.Orders.Add(order);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                _context.Orders.Add(order);
+                _context.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.CostumerId = new SelectList(db.Costumers, "CostumerId", "FirstName", order.CostumerId);
-            return View(order);
+            return View();
         }
 
         // GET: Orders/Edit/5
@@ -129,29 +131,41 @@ namespace FakeStore2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
+
+            var order = _context.Orders
+                .Where(o => o.OrderId == id).Select(o => new OrdersModel()
+                {
+                    Costumer = o.Costumer.FirstName,
+                    CostumerId = o.CostumerId,
+                    OrderDate = o.OrderDate.ToString(),
+                    OrderId = o.OrderId,
+                    Total = o.Total,
+                }
+                ).FirstOrDefault();
+
+
             if (order == null)
+
             {
                 return HttpNotFound();
             }
-            ViewBag.CostumerId = new SelectList(db.Costumers, "CostumerId", "FirstName", order.CostumerId);
+
+            ViewBag.CostumerId = new SelectList(_context.Costumers, "CostumerId", "FirstName", order.CostumerId);
             return View(order);
         }
 
         // POST: Orders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "OrderId,CostumerId,OrderDate,Total")] Order order)
+        public ActionResult Edit(Order order)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(order).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                _context.Orders.Add(order);
+                _context.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
             }
-            ViewBag.CostumerId = new SelectList(db.Costumers, "CostumerId", "FirstName", order.CostumerId);
             return View(order);
         }
 
@@ -162,7 +176,19 @@ namespace FakeStore2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
+
+            var order = _context.Orders
+                .Where(o => o.OrderId == id)
+                .Select(o => new OrdersModel()
+                {
+                    OrderId = o.OrderId,
+                    Costumer = o.Costumer.FirstName,
+                    CostumerId= o.CostumerId,
+                    OrderDate= o.OrderDate.ToString(),
+                    Total = o.Total,
+                    })
+                .FirstOrDefault();
+
             if (order == null)
             {
                 return HttpNotFound();
@@ -175,17 +201,18 @@ namespace FakeStore2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Order order = db.Orders.Find(id);
-            db.Orders.Remove(order);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            Order order = _context.Orders.Find(id);
+            _context.Orders.Remove(order);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                _context.Dispose();
             }
             base.Dispose(disposing);
         }
