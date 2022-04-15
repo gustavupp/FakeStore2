@@ -12,59 +12,24 @@
     @Html.DropDownListFor(cn => cn.Costumers, new SelectList(Model.Costumers, "CostumerId", "FirstName"), "All Costumers", new { @class = "form-control", id = "customerDropdown" })
 </div>
 
-
-@*<table class="table">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Orders)
-            </th>
-            <th>
-                Total
-            </th>
-            <th>
-                Names
-            </th>
-            <th></th>
-        </tr>
-
-        @foreach (var item in Model.Orders)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Total)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Costumer.FirstName)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.OrderId }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.OrderId }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.OrderId })
-                </td>
-            </tr>
-        }
-
-    </table>*@
-
 <br />
 <div>
     <table class="table table-responsive">
         <thead>
             <tr>
-                <th>@Html.LabelFor(ovm => ovm.Orders)</th>
+                <th>@Html.LabelFor(ovm => ovm.Orders.FirstOrDefault().OrderDate)</th>
                 <th>@Html.LabelFor(ovm => ovm.Orders.FirstOrDefault().Total)</th>
                 <th>@Html.LabelFor(ovm => ovm.Costumers.FirstOrDefault().FirstName)</th>
                 <th></th>
             </tr>
         </thead>
         <tbody class="js-costumer-table-body">
+            <!--Table body dynamically rendered-->
         </tbody>
     </table>
 </div>
 
+<!--Pagination-->
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
         <li class="page-item disabled">
@@ -89,8 +54,10 @@
         document.addEventListener("DOMContentLoaded", function () {
             const dropdownList = document.querySelector('#customerDropdown');
             const jsTable = document.querySelector('.js-costumer-table-body');
+            let startRow = 0;
+            let amountOfRows = 10;
 
-            let url = "https://localhost:44372/Api/Orders";
+            let url = "https://localhost:44372/api/orders";
 
             //fetch function
             const fetchOrders = async (url) => {
@@ -122,7 +89,7 @@
             };
 
             //call fetchOrders without id to get all orders as soon as DOM loads
-            fetchOrders(url).then(data => {
+            fetchOrders(`${url}?startRow=${startRow}&amountOfRows=${amountOfRows}`).then(data => {
                 jsTable.innerHTML = tableContents(data);
 
                 //then fetch orders of individual customer onchange
