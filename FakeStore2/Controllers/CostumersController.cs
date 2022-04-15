@@ -166,15 +166,13 @@ namespace FakeStore2.Controllers
             Costumer costumer = _context.Costumers.Find(id);
 
             bool hasOrders = _context.Orders.Any(o => o.Costumer.CostumerId == id);
-            
-            if (hasOrders)
-            {
-                return Content("<h3>Cannot delete a customer who has orders. Delete the orders first.</h3>");
 
-            }
-            
+            var allCostumerOrders = _context.Orders.Where(o => o.CostumerId == id).ToList();
+            allCostumerOrders.ForEach(o => _context.Orders.Remove(o));
             _context.Costumers.Remove(costumer); 
+
             _context.SaveChanges();
+
             return RedirectToAction(nameof(Index));
         }
 

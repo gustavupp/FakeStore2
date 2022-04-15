@@ -43,7 +43,11 @@
 
 </table>
 <br />
-<a>
-    @Html.ActionLink("Create New", "Create",null, new {@class="btn btn-success"})
-</a>
+<div>
+    <button class="btn btn-default" onclick="history.back()">Back</button>
+    <a>
+        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
+    </a>
+</div>
+
 

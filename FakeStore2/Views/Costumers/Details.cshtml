@@ -47,15 +47,17 @@
             @Html.DisplayNameFor(model => model.Orders)
         </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.OrdersCount)
-            @Html.ActionLink("Go to Orders", "CostumerOrders", "Orders", new { id = Model.CostumerId }, new { @class = "btn btn-secondary btn-sm" })
-
-        </dd>
+        @if (Model.OrdersCount > 0)
+        {
+            <dd>
+                @Html.DisplayFor(model => model.OrdersCount)
+                @Html.ActionLink("Go to Orders", "CostumerOrders", "Orders", new { id = Model.CostumerId }, new { @class = "btn btn-secondary btn-sm" })
+            </dd>
+        }
     </dl>
 </div>
+<br/>
 <p>
     @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
-
     @Html.ActionLink("Edit", "Edit", new { id = Model.CostumerId }, new { @class = "btn btn-primary" })
 </p>

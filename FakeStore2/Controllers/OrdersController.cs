@@ -23,7 +23,7 @@ namespace FakeStore2.Controllers
                 .Include(o => o.Costumer)
                 .Select(o => new Models.OrdersModel() 
             {
-            Costumer = o.Costumer.FirstName,
+            CostumerName = o.Costumer.FirstName,
             CostumerId = o.CostumerId,
             OrderDate = o.OrderDate.ToString(),
             OrderId = o.OrderId,
@@ -60,7 +60,7 @@ namespace FakeStore2.Controllers
                 .Where(o => o.CostumerId == id)
                 .Select(o => new Models.OrdersModel()
                 {
-                    Costumer = o.Costumer.FirstName,
+                    CostumerName = o.Costumer.FirstName,
                     CostumerId = o.CostumerId,
                     OrderDate = o.OrderDate.ToString(),
                     OrderId = o.OrderId,
@@ -84,7 +84,7 @@ namespace FakeStore2.Controllers
                 .Where(o => o.OrderId == id)
                 .Select(o => new OrdersModel() 
                 {
-                    Costumer = o.Costumer.FirstName,
+                    CostumerName = o.Costumer.FirstName,
                     CostumerId = o.CostumerId,
                     OrderDate = o.OrderDate.ToString(),
                     OrderId = o.OrderId,
@@ -135,7 +135,7 @@ namespace FakeStore2.Controllers
             var order = _context.Orders
                 .Where(o => o.OrderId == id).Select(o => new OrdersModel()
                 {
-                    Costumer = o.Costumer.FirstName,
+                    CostumerName = o.Costumer.FirstName,
                     CostumerId = o.CostumerId,
                     OrderDate = o.OrderDate.ToString(),
                     OrderId = o.OrderId,
@@ -188,7 +188,7 @@ namespace FakeStore2.Controllers
                 .Select(o => new OrdersModel()
                 {
                     OrderId = o.OrderId,
-                    Costumer = o.Costumer.FirstName,
+                    CostumerName = o.Costumer.FirstName,
                     CostumerId= o.CostumerId,
                     OrderDate= o.OrderDate.ToString(),
                     Total = o.Total,

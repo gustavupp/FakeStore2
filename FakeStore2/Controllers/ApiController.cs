@@ -26,7 +26,7 @@ namespace FakeStore2.Controllers
                         OrderDate = o.OrderDate.ToString(),
                         OrderId = o.OrderId,
                         Total = o.Total,
-                        Costumer = o.Costumer.FirstName,
+                        CostumerName = o.Costumer.FirstName,
                     })
                     .ToList();
 
@@ -41,7 +41,7 @@ namespace FakeStore2.Controllers
                     OrderDate = o.OrderDate.ToString(),
                     OrderId = o.OrderId,
                     Total = o.Total,
-                    Costumer = o.Costumer.FirstName,
+                    CostumerName = o.Costumer.FirstName,
                 })
                 .ToList();
 

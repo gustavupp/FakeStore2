@@ -54,13 +54,13 @@
     <table class="table table-responsive">
         <thead>
             <tr>
-                <th>Orders</th>
-                <th>Total</th>
-                <th>Names</th>
+                <th>@Html.LabelFor(ovm => ovm.Orders)</th>
+                <th>@Html.LabelFor(ovm => ovm.Orders.FirstOrDefault().Total)</th>
+                <th>@Html.LabelFor(ovm => ovm.Costumers.FirstOrDefault().FirstName)</th>
                 <th></th>
             </tr>
         </thead>
-        <tbody class="js-costumer-table">
+        <tbody class="js-costumer-table-body">
         </tbody>
     </table>
 </div>
@@ -88,7 +88,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const dropdownList = document.querySelector('#customerDropdown');
-            const jsTable = document.querySelector('.js-costumer-table');
+            const jsTable = document.querySelector('.js-costumer-table-body');
 
             let url = "https://localhost:44372/Api/Orders";
 
@@ -110,7 +110,7 @@
                     return `<tr>
                                 <td>${item.OrderDate}</td>
                                 <td>$${item.Total}</td>
-                                <td>${item.Costumer}</td>
+                                <td>${item.CostumerName}</td>
                                 <td>
                                     <a href='https://localhost:44372/Orders/Edit/${item.OrderId}' alt="Edit">Edit</a> |
                                     <a href='https://localhost:44372/Orders/Details/${item.OrderId}' alt="details">Details</> |
@@ -129,7 +129,8 @@
                 dropdownList.addEventListener("change", function () {
 
                     fetchOrders(`${url}/${dropdownList.value}`).then(data => {
-                        jsTable.innerHTML = tableContents(data);
+                        console.log(data)
+                        jsTable.innerHTML = data.length > 0 ? tableContents(data) : "<br/><p class='text-center'>Costumer hasn't placed any orders yet.</p>";
                     })
                 });
             });
