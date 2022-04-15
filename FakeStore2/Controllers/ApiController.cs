@@ -1,5 +1,6 @@
 ﻿using FakeStore2.Models;
 using FakeStore2.Persistence;
+using FakeStore2.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -16,18 +17,17 @@ namespace FakeStore2.Controllers
         //Get Orders of given customer: Api/Orders/Id
         [HttpGet]
         [Route("api/orders/{id?}")]
-        public JsonResult Orders(int? id, int startRow = 0, int amountOfRows = 8)
+        public JsonResult Orders(int? id, int startRow = 0, int amountOfRows = 10)
         {
-            var paginatedOrders = _context.Orders
-                    .OrderBy(o => o.OrderId)
-                    .Skip(startRow)
-                    .Take(amountOfRows);
 
             if (id.HasValue)
             {
-                //converts the db object into a Model class before sendint to front end
-                var orders = paginatedOrders
+                //converts the db object into a Model class before sending it to front end
+                var orders = _context.Orders
                     .Where(o => o.CostumerId == id)
+                    .OrderBy(o => o.OrderId)
+                    .Skip(startRow)
+                    .Take(amountOfRows)
                     .Select(o => new OrdersModel()
                     {
                         CostumerId = o.CostumerId,
@@ -38,12 +38,18 @@ namespace FakeStore2.Controllers
                     })
                     .ToList();
 
-                return Json(orders, JsonRequestBehavior.AllowGet);
+                var costumerOrdersCount = _context.Orders.Where(o => o.CostumerId == id).Count();
+                var numberOfPages = Math.Ceiling((double)costumerOrdersCount / amountOfRows);
+                //return numberOfPages and orders
+                return Json(new {orders, numberOfPages}, JsonRequestBehavior.AllowGet);
             }
 
             else
             {
-                var orders = paginatedOrders
+                var orders = _context.Orders
+                    .OrderBy(o => o.OrderId)
+                    .Skip(startRow)
+                    .Take(amountOfRows)
                     .Select(o => new OrdersModel()
                 {
                     CostumerId = o.CostumerId,
@@ -54,7 +60,9 @@ namespace FakeStore2.Controllers
                 })
                 .ToList();
 
-                return Json(orders, JsonRequestBehavior.AllowGet);
+                var numberOfPages = Math.Ceiling((double)_context.Orders.Count() / amountOfRows);
+                //return numberOfPages and orders
+                return Json(new { orders, numberOfPages }, JsonRequestBehavior.AllowGet);
             }
             
         }

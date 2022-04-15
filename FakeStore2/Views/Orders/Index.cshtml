@@ -31,16 +31,8 @@
 
 <!--Pagination-->
 <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-        <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1">Previous</a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-            <a class="page-link" href="#">Next</a>
-        </li>
+    <ul class="pagination-btns pagination justify-content-center">
+       <!--pagination btns dynamically rendered-->
     </ul>
 </nav>
 
@@ -54,6 +46,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const dropdownList = document.querySelector('#customerDropdown');
             const jsTable = document.querySelector('.js-costumer-table-body');
+            const pageBtns = document.querySelector('.pagination-btns');
             let startRow = 0;
             let amountOfRows = 10;
 
@@ -88,16 +81,25 @@
                 return result;
             };
 
+            //pagination btns render function
+            let paginationBtns = (number) => {
+                let result = Array.from({ length: number }).map((_, index) => {
+                    return `<li class="page-item"><a class="page-link" href="#">${index + 1}</a></li>`;
+                }).join("");
+                return result;
+            };
+               
             //call fetchOrders without id to get all orders as soon as DOM loads
             fetchOrders(`${url}?startRow=${startRow}&amountOfRows=${amountOfRows}`).then(data => {
-                jsTable.innerHTML = tableContents(data);
+                jsTable.innerHTML = tableContents(data.orders);
+                pageBtns.innerHTML = paginationBtns(data.numberOfPages);
 
                 //then fetch orders of individual customer onchange
                 dropdownList.addEventListener("change", function () {
-
                     fetchOrders(`${url}/${dropdownList.value}`).then(data => {
-                        console.log(data)
-                        jsTable.innerHTML = data.length > 0 ? tableContents(data) : "<br/><p class='text-center'>Costumer hasn't placed any orders yet.</p>";
+                        const { orders } = data;
+                        jsTable.innerHTML = orders.length > 0 ? tableContents(orders) : "<br/><p class='text-center'>Costumer hasn't placed any orders yet.</p>";
+                        pageBtns.innerHTML = paginationBtns(data.numberOfPages);
                     })
                 });
             });
