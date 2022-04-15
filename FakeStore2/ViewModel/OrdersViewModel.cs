@@ -1,6 +1,7 @@
 ﻿using FakeStore2.Persistence;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -10,5 +11,6 @@ namespace FakeStore2.ViewModel
     {
         public IEnumerable<Models.OrdersModel> Orders { get; set; }
         public IEnumerable<Models.CustomerModel> Costumers { get; set; }
+
     }
 }

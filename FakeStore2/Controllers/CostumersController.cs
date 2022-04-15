@@ -19,7 +19,21 @@ namespace FakeStore2.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            return View(_context.Costumers.ToList());
+            var costumers = _context.Costumers
+                .Include(c => c.Orders)
+                .Select(c => new CustomerModel()
+                {
+                    CostumerId = c.CostumerId,
+                    CostumerSince = c.CostumerSince.ToString(),
+                     FirstName = c.FirstName,
+                     LastName = c.LastName,
+                     isActive = c.isActive,
+                     Orders = c.Orders,
+                     OrdersCount = c.Orders.Count(),
+                })
+                .ToList();
+
+            return View(costumers);
         }
 
         // GET: Costumers/Details/5
