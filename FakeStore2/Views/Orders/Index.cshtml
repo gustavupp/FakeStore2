@@ -97,12 +97,10 @@
                          `).join("")
             };
 
-            //call fetchOrders without id to get all orders as soon as DOM loads
-            fetchOrders(`${url}?startRow=${startRow}&amountOfRows=${amountOfRows}`).then(data => {
-                jsTable.innerHTML = tableContents(data.orders);
-                btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
 
-                //search input
+
+            //search input function
+            const searchInputFunction = (data) => {
                 search.addEventListener('keyup', function () {
                     let self = this;
                     let filteredData = data.orders.filter(o => {
@@ -110,7 +108,19 @@
                             o.Total == self.value;
                     });
                     jsTable.innerHTML = tableContents(filteredData);
+
                 })
+            };
+           
+
+
+            //call fetchOrders without id to get all orders as soon as DOM loads
+            fetchOrders(`${url}?startRow=${startRow}&amountOfRows=${amountOfRows}`).then(data => {
+                jsTable.innerHTML = tableContents(data.orders);
+                btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
+
+                //search input
+                searchInputFunction(data);
 
                 //generate and setup logic of pagination btns
                 let allPageBtns = btnsContainer.querySelectorAll('.page-btn');
@@ -132,6 +142,9 @@
                         const { orders } = data;
                         jsTable.innerHTML = orders.length > 0 ? tableContents(orders) : "<br/><p class='text-center'>Costumer hasn't placed any orders yet.</p>";
                         btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
+
+                        //search input
+                        searchInputFunction(data);
 
                         let allPageBtns = btnsContainer.querySelectorAll('.page-btn');
                         allPageBtns.forEach(btn => {
