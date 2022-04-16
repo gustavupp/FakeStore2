@@ -31,7 +31,7 @@
 
 <!--Pagination-->
 <nav aria-label="Page navigation example">
-    <ul class="pagination-btns pagination justify-content-center">
+    <ul class="pagination-btns-container pagination justify-content-center">
        <!--pagination btns dynamically rendered-->
     </ul>
 </nav>
@@ -46,7 +46,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const dropdownList = document.querySelector('#customerDropdown');
             const jsTable = document.querySelector('.js-costumer-table-body');
-            const pageBtns = document.querySelector('.pagination-btns');
+            const btnsContainer = document.querySelector('.pagination-btns-container');
             let startRow = 0;
             let amountOfRows = 10;
 
@@ -57,6 +57,7 @@
                 try {
                     const response = await fetch(url);
                     const data = await response.json();
+                    console.log(data);
                     return data;
 
                 } catch (err) {
@@ -66,40 +67,53 @@
 
             //tableContents render function
             let tableContents = (obj) => {
-                let result = obj.map(item => {
-                    return `<tr>
-                                <td>${item.OrderDate}</td>
-                                <td>$${item.Total}</td>
-                                <td>${item.CostumerName}</td>
-                                <td>
-                                    <a href='https://localhost:44372/Orders/Edit/${item.OrderId}' alt="Edit">Edit</a> |
-                                    <a href='https://localhost:44372/Orders/Details/${item.OrderId}' alt="details">Details</> |
-                                    <a href='https://localhost:44372/Orders/Delete/${item.OrderId}' alt="Delete">Delete</a>
-                                </td>
-                            </tr>`;
-                }).join("");
-                return result;
+                return obj.map(item => `
+                    <tr>
+                        <td>${item.OrderDate}</td>
+                        <td>$${item.Total}</td>
+                        <td>${item.CostumerName}</td>
+                        <td>
+                            <a href='https://localhost:44372/Orders/Edit/${item.OrderId}' alt="Edit">Edit</a> |
+                            <a href='https://localhost:44372/Orders/Details/${item.OrderId}' alt="details">Details</> |
+                            <a href='https://localhost:44372/Orders/Delete/${item.OrderId}' alt="Delete">Delete</a>
+                        </td>
+                    </tr>
+                `).join("");
             };
 
             //pagination btns render function
             let paginationBtns = (number) => {
-                let result = Array.from({ length: number }).map((_, index) => {
-                    return `<li class="page-item"><a class="page-link" href="#">${index + 1}</a></li>`;
-                }).join("");
-                return result;
+                return Array.from({ length: number })
+                    .map((_, index) => `
+                        <li class="page-item">
+                            <button class="page-btn page-link" data-index="${index}">${index + 1}</button>
+                        </li>
+                        `)
+                    .join("");
             };
                
             //call fetchOrders without id to get all orders as soon as DOM loads
             fetchOrders(`${url}?startRow=${startRow}&amountOfRows=${amountOfRows}`).then(data => {
                 jsTable.innerHTML = tableContents(data.orders);
-                pageBtns.innerHTML = paginationBtns(data.numberOfPages);
+                btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
+
+                //generate and setup logic of pagination btns
+                const allPageBtns = btnsContainer.querySelectorAll('.page-btn');
+                allPageBtns.forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        fetchOrders(`${url}?startRow=${parseInt(this.dataset.index) * amountOfRows}&amountOfRows=${amountOfRows}`)
+                            .then(data => {
+                                jsTable.innerHTML = tableContents(data.orders);
+                            });
+                    })
+                });
 
                 //then fetch orders of individual customer onchange
                 dropdownList.addEventListener("change", function () {
                     fetchOrders(`${url}/${dropdownList.value}`).then(data => {
                         const { orders } = data;
                         jsTable.innerHTML = orders.length > 0 ? tableContents(orders) : "<br/><p class='text-center'>Costumer hasn't placed any orders yet.</p>";
-                        pageBtns.innerHTML = paginationBtns(data.numberOfPages);
+                        btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
                     })
                 });
             });
