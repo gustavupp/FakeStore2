@@ -20,6 +20,8 @@ namespace FakeStore2.Controllers
         public JsonResult Orders(int? id, int startRow = 0, int amountOfRows = 10)
         {
 
+            if (startRow < 0) return Json(new {value = 0});
+
             if (id.HasValue)
             {
                 //converts the db object into a Model class before sending it to front end
