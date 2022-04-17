@@ -17,8 +17,8 @@
 
 <br />
 <div>
-    <table class="table table-responsive">
-        <thead>
+    <table class="table table-responsive table-hover">
+        <thead class="bg-info">
             <tr>
                 <th>@Html.LabelFor(ovm => ovm.Orders.FirstOrDefault().OrderDate)</th>
                 <th>@Html.LabelFor(ovm => ovm.Orders.FirstOrDefault().Total)</th>
@@ -97,8 +97,6 @@
                          `).join("")
             };
 
-
-
             //search input function
             const searchInputFunction = (data) => {
                 search.addEventListener('keyup', function () {
@@ -111,7 +109,21 @@
 
                 })
             };
-           
+
+            //declate function that generate and sets up pagination's logic and btns
+            const addEventListenerToPaginationBtns = () => {
+                btnsContainer.querySelectorAll('.page-btn')
+                    .forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            startRow = parseInt(this.dataset.index) * amountOfRows;
+
+                            fetchOrders(`${url}?startRow=${startRow}&amountOfRows=${amountOfRows}`)
+                                .then(data => {
+                                    jsTable.innerHTML = tableContents(data.orders);
+                                });
+                        })
+                    });
+            }
 
 
             //call fetchOrders without id to get all orders as soon as DOM loads
@@ -119,21 +131,8 @@
                 jsTable.innerHTML = tableContents(data.orders);
                 btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
 
-                //search input
                 searchInputFunction(data);
-
-                //generate and setup logic of pagination btns
-                let allPageBtns = btnsContainer.querySelectorAll('.page-btn');
-                allPageBtns.forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        startRow = parseInt(this.dataset.index) * amountOfRows;
-
-                        fetchOrders(`${url}?startRow=${startRow}&amountOfRows=${amountOfRows}`)
-                            .then(data => {
-                                jsTable.innerHTML = tableContents(data.orders);
-                            });
-                    })
-                });
+                addEventListenerToPaginationBtns();
 
                 //then fetch orders of individual customer onchange
                 dropdownList.addEventListener("change", function () {
@@ -143,20 +142,9 @@
                         jsTable.innerHTML = orders.length > 0 ? tableContents(orders) : "<br/><p class='text-center'>Costumer hasn't placed any orders yet.</p>";
                         btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
 
-                        //search input
                         searchInputFunction(data);
+                        addEventListenerToPaginationBtns();
 
-                        let allPageBtns = btnsContainer.querySelectorAll('.page-btn');
-                        allPageBtns.forEach(btn => {
-                            btn.addEventListener('click', function () {
-                                startRow = parseInt(this.dataset.index) * amountOfRows;
-
-                                fetchOrders(`${url}/${dropdownList.value}?startRow=${startRow}&amountOfRows=${amountOfRows}`)
-                                    .then(data => {
-                                        jsTable.innerHTML = tableContents(data.orders);
-                                    });
-                            })
-                        });
                     })
 
                 });
