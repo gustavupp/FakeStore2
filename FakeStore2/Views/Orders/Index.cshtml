@@ -7,13 +7,16 @@
 
 <h2>@ViewBag.Title</h2>
 <br />
-<div class="form-group">
-    @Html.LabelFor(cn => cn.Costumers)
-    @Html.DropDownListFor(cn => cn.Costumers, new SelectList(Model.Costumers, "CostumerId", "FirstName"), "All Costumers", new { @class = "form-control", id = "customerDropdown" })
+<div class="form-group" style="display:flex">
+    <div style="margin-right: 25px;">
+        @Html.LabelFor(cn => cn.Costumers)
+        @Html.DropDownListFor(cn => cn.Costumers, new SelectList(Model.Costumers, "CostumerId", "FirstName"), "All Costumers", new { @class = "form-control", id = "customerDropdown" })
+    </div>
+    <div>
+        <label>Search</label>
+        <input type="text" class="search form-control" placeholder="Search by Costumer Name or Total">
+    </div>
 </div>
-<label>Search</label>
-<input type="text" class="search form-control" placeholder="Search by Costumer Name or Total">
-
 
 <br />
 <div>
@@ -33,15 +36,12 @@
 </div>
 
 <!--Pagination Btns-->
-<nav aria-label="pagination">
+<nav class="text-center" aria-label="pagination">
     <ul class="pagination-btns-container pagination justify-content-center">
-
         <!--pagination btns dynamically rendered-->
-
     </ul>
 </nav>
 
-<br />
 <a>
     @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
 </a>
