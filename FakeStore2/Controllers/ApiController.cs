@@ -20,19 +20,20 @@ namespace FakeStore2.Controllers
             _context = context;
         }
 
+
         //Get Orders of given customer: Api/Orders/Id
         [HttpGet]
         [Route("api/orders/{id?}")]
-        public JsonResult Orders(int? id, int startRow = 0, int amountOfRows = 10)
+        public JsonResult Orders(int? id, int startRow = 0, int amountOfRows = 10, string searchInput = "")
         {
-
             if (startRow < 0) return Json(new {value = 0});
 
             if (id.HasValue)
             {
                 //converts the db object into a Model class before sending it to front end
                 var orders = _context.Orders
-                    .Where(o => o.CostumerId == id)
+                    .Where(o => o.CostumerId == id && (o.Costumer.FirstName.Contains(searchInput) ||
+                     o.Total.ToString().Contains(searchInput)))
                     .OrderBy(o => o.OrderId)
                     .Skip(startRow)
                     .Take(amountOfRows)
@@ -55,6 +56,8 @@ namespace FakeStore2.Controllers
             else
             {
                 var orders = _context.Orders
+                    .Where(o => (o.Costumer.FirstName.Contains(searchInput)) ||
+                     o.Total.ToString().Contains(searchInput))
                     .OrderBy(o => o.OrderId)
                     .Skip(startRow)
                     .Take(amountOfRows)

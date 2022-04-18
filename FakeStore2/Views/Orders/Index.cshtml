@@ -98,26 +98,24 @@
             };
 
             //search input function
-            const searchInputFunction = (data) => {
+            const searchInputFunction = () => {
                 search.addEventListener('keyup', function () {
-                    let self = this;
-                    let filteredData = data.orders.filter(o => {
-                        return o.CostumerName.toLowerCase().includes(self.value.toLowerCase()) ||
-                            o.Total == self.value;
-                    });
-                    jsTable.innerHTML = tableContents(filteredData);
-
+                    fetchOrders(`${url}/${dropdownList.value}?searchInput=${search.value}`).then(data => {
+                        jsTable.innerHTML = tableContents(data.orders);
+                        btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
+                        addEventListenerToPaginationBtns();
+                    })
                 })
             };
 
-            //declate function that generate and sets up pagination's logic and btns
+            //declare function that generate and sets up pagination's logic and btns
             const addEventListenerToPaginationBtns = () => {
                 btnsContainer.querySelectorAll('.page-btn')
                     .forEach(btn => {
                         btn.addEventListener('click', function () {
                             startRow = parseInt(this.dataset.index) * amountOfRows;
 
-                            fetchOrders(`${url}?startRow=${startRow}&amountOfRows=${amountOfRows}`)
+                            fetchOrders(`${url}/${dropdownList.value}?searchInput=${search.value}&startRow=${startRow}&amountOfRows=${amountOfRows}`)
                                 .then(data => {
                                     jsTable.innerHTML = tableContents(data.orders);
                                 });
@@ -131,22 +129,20 @@
                 jsTable.innerHTML = tableContents(data.orders);
                 btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
 
-                searchInputFunction(data);
+                searchInputFunction();
                 addEventListenerToPaginationBtns();
 
                 //then fetch orders of individual customer onchange
                 dropdownList.addEventListener("change", function () {
                     startRow = 0;
-                    fetchOrders(`${url}/${dropdownList.value}?startRow=${startRow}&amountOfRows=${amountOfRows}`).then(data => {
+                    fetchOrders(`${url}/${dropdownList.value}?searchInput=${search.value}&startRow=${startRow}&amountOfRows=${amountOfRows}`).then(data => {
                         const { orders } = data;
                         jsTable.innerHTML = orders.length > 0 ? tableContents(orders) : "<br/><p class='text-center'>Costumer hasn't placed any orders yet.</p>";
                         btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
 
-                        searchInputFunction(data);
+                        searchInputFunction();
                         addEventListenerToPaginationBtns();
-
                     })
-
                 });
             });
         });
