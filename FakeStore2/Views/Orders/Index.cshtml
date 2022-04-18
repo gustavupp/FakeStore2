@@ -101,6 +101,7 @@
             const searchInputFunction = () => {
                 search.addEventListener('keyup', function () {
                     fetchOrders(`${url}/${dropdownList.value}?searchInput=${search.value}`).then(data => {
+                        console.log(data)
                         jsTable.innerHTML = tableContents(data.orders);
                         btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
                         addEventListenerToPaginationBtns();

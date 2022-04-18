@@ -55,23 +55,24 @@ namespace FakeStore2.Controllers
 
             else
             {
-                var orders = _context.Orders
+                var ordersWithoutPagination = _context.Orders
                     .Where(o => (o.Costumer.FirstName.Contains(searchInput)) ||
-                     o.Total.ToString().Contains(searchInput))
-                    .OrderBy(o => o.OrderId)
+                     o.Total.ToString().Contains(searchInput)).ToList();
+
+                var orders = ordersWithoutPagination.OrderBy(o => o.OrderId)
                     .Skip(startRow)
                     .Take(amountOfRows)
                     .Select(o => new OrdersModel()
-                {
-                    CostumerId = o.CostumerId,
-                    OrderDate = o.OrderDate.ToString(),
-                    OrderId = o.OrderId,
-                    Total = o.Total,
-                    CostumerName = o.Costumer.FirstName,
-                })
-                .ToList();
+                    {
+                        CostumerId = o.CostumerId,
+                        OrderDate = o.OrderDate.ToString(),
+                        OrderId = o.OrderId,
+                        Total = o.Total,
+                        CostumerName = o.Costumer.FirstName,
+                    });
 
-                var numberOfPages = Math.Ceiling((double)_context.Orders.Count() / amountOfRows);
+                var numberOfPages = Math.Ceiling((double)ordersWithoutPagination.Count() / amountOfRows);
+
                 //return numberOfPages and orders
                 return Json(new { orders, numberOfPages }, JsonRequestBehavior.AllowGet);
             }
