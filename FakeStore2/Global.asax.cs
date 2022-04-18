@@ -13,7 +13,7 @@ namespace FakeStore2
     {
         protected void Application_Start()
         {
-            //cutom controller registration
+            //custom controller registration
             RegisterCustomControllerFactory();
 
             AreaRegistration.RegisterAllAreas();
@@ -22,8 +22,10 @@ namespace FakeStore2
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
+        //method to register custom controller
         private void RegisterCustomControllerFactory()
         {
+
             IControllerFactory factory = new CustomControllerFactory();
             ControllerBuilder.Current.SetControllerFactory(factory);
         }

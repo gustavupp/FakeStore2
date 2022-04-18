@@ -1,4 +1,6 @@
-﻿using FakeStore2.Persistence;
+﻿using Autofac;
+using FakeStore2.Persistence;
+using FakeStore2.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +14,14 @@ namespace FakeStore2.CustomController
     {
         protected override IController GetControllerInstance(System.Web.Routing.RequestContext requestContext, Type controllerType)
         {
-            var context = new FakeStore2Entities();
+            //autofac setup 
+            ContainerBuilder builder = new ContainerBuilder();
+            builder.RegisterType<FakeStore2Entities>().As<IFakeStore2Entities>();
+            var Container = builder.Build();
+
+            //isntead of manually instanciate FakeStire2Entities, let autofac do that for you.
+            var context = Container.Resolve<IFakeStore2Entities>();
+
             IController controller = Activator.CreateInstance(controllerType, new[] { context }) as Controller;
             return controller;
         }
