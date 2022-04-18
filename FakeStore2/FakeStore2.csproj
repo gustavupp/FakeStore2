@@ -130,6 +130,7 @@
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\CostumersController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
+    <Compile Include="CustomControllerFactory\CustomController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

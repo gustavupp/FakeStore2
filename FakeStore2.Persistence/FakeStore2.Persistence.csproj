@@ -72,6 +72,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FakeStore2Context.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IFakeStore2Entities.cs" />
     <Compile Include="Order.cs">
       <DependentUpon>FakeStore2Context.tt</DependentUpon>
     </Compile>

@@ -1,5 +1,6 @@
 ﻿using FakeStore2.Models;
 using FakeStore2.Persistence;
+using FakeStore2.Persistence.Interfaces;
 using FakeStore2.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,12 @@ namespace FakeStore2.Controllers
 {
     public class ApiController : Controller
     {
-        private FakeStore2Entities _context = new FakeStore2Entities();
+        private readonly IFakeStore2Entities _context;
+
+        public ApiController(IFakeStore2Entities context)
+        {
+            _context = context;
+        }
 
         //Get Orders of given customer: Api/Orders/Id
         [HttpGet]

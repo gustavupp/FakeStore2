@@ -8,13 +8,19 @@ using System.Web;
 using System.Web.Mvc;
 using FakeStore2.Models;
 using FakeStore2.Persistence;
+using FakeStore2.Persistence.Interfaces;
 using FakeStore2.ViewModel;
 
 namespace FakeStore2.Controllers
 {
     public class OrdersController : Controller
     {
-        private FakeStore2Entities _context = new FakeStore2Entities();
+        private readonly IFakeStore2Entities _context;
+
+        public OrdersController(IFakeStore2Entities context)
+        {
+            _context = context;
+        }
 
         // GET: All Orders
         public ActionResult Index()
@@ -33,7 +39,7 @@ namespace FakeStore2.Controllers
 
             var costumers = _context.Costumers
                 .Include(c => c.Orders)
-                .Select(c => new Models.CustomerModel()
+                .Select(c => new CustomerModel()
                 { 
                 FirstName = c.FirstName,
                 LastName = c.LastName,
@@ -58,7 +64,7 @@ namespace FakeStore2.Controllers
         {
                 var orders = _context.Orders
                 .Where(o => o.CostumerId == id)
-                .Select(o => new Models.OrdersModel()
+                .Select(o => new OrdersModel()
                 {
                     CostumerName = o.Costumer.FirstName,
                     CostumerId = o.CostumerId,
@@ -133,7 +139,8 @@ namespace FakeStore2.Controllers
             }
 
             var order = _context.Orders
-                .Where(o => o.OrderId == id).Select(o => new OrdersModel()
+                .Where(o => o.OrderId == id)
+                .Select(o => new OrdersModel()
                 {
                     CostumerName = o.Costumer.FirstName,
                     CostumerId = o.CostumerId,
@@ -157,14 +164,14 @@ namespace FakeStore2.Controllers
         // POST: Orders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Order order)
+        public ActionResult Edit(OrdersModel order)
         {
             if (ModelState.IsValid)
             {
 
                 var editingOrder = _context.Orders.FirstOrDefault(o => o.OrderId == order.OrderId);
 
-                editingOrder.OrderDate = order.OrderDate;
+                editingOrder.OrderDate = DateTime.Parse(order.OrderDate);
                 editingOrder.Total = order.Total;
                 editingOrder.CostumerId = order.CostumerId;
 

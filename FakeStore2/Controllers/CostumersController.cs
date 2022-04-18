@@ -8,12 +8,18 @@ using System.Web;
 using System.Web.Mvc;
 using FakeStore2.Models;
 using FakeStore2.Persistence;
+using FakeStore2.Persistence.Interfaces;
 
 namespace FakeStore2.Controllers
 {
     public class CostumersController : Controller
     {
-        private FakeStore2Entities _context = new FakeStore2Entities();
+        private readonly IFakeStore2Entities _context;
+
+        public CostumersController(IFakeStore2Entities context)
+        {
+            this._context = context;
+        }
 
         // GET: Costumers
         [HttpGet]

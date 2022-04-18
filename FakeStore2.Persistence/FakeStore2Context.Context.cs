@@ -12,14 +12,19 @@ namespace FakeStore2.Persistence
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    
-    public partial class FakeStore2Entities : DbContext
+    using System.Threading.Tasks;
+    using Persistence.Interfaces;
+    public partial class FakeStore2Entities : DbContext, IFakeStore2Entities
     {
         public FakeStore2Entities()
             : base("name=FakeStore2Entities")
         {
         }
-    
+
+        //overwrites SaveChanges() from DbContext
+        //it doesnt override anything, I just had to implement this so I could add this method to the interface
+        public override int SaveChanges() => base.SaveChanges();
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
