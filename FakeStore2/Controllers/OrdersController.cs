@@ -22,6 +22,11 @@ namespace FakeStore2.Controllers
             _context = context;
         }
 
+        public ActionResult Datatable()
+        {
+            return View(nameof(Datatable));
+        }
+
         // GET: All Orders
         public ActionResult Index()
         {
@@ -229,5 +234,6 @@ namespace FakeStore2.Controllers
             }
             base.Dispose(disposing);
         }
+
     }
 }

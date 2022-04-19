@@ -21,7 +21,7 @@
 <br />
 <div>
     <table class="table table-responsive table-hover">
-        <thead class="bg-info">
+        <thead class="bg-info" style="background-color: #f6f6f6; color:dimgrey">
             <tr>
                 <th>@Html.LabelFor(ovm => ovm.Orders.FirstOrDefault().OrderDate)</th>
                 <th>@Html.LabelFor(ovm => ovm.Orders.FirstOrDefault().Total)</th>
@@ -49,7 +49,6 @@
 @section scripts{
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-
             const dropdownList = document.querySelector('#customerDropdown');
             const jsTable = document.querySelector('.js-costumer-table-body');
             const btnsContainer = document.querySelector('.pagination-btns-container');
@@ -79,9 +78,9 @@
                             <td>$${item.Total}</td>
                             <td>${item.CostumerName}</td>
                             <td>
-                                <a href='https://localhost:44372/Orders/Edit/${item.OrderId}' alt="Edit">Edit</a> |
-                                <a href='https://localhost:44372/Orders/Details/${item.OrderId}' alt="details">Details</> |
-                                <a href='https://localhost:44372/Orders/Delete/${item.OrderId}' alt="Delete">Delete</a>
+                                <a class="btn btn-default btn-sm" href='https://localhost:44372/Orders/Edit/${item.OrderId}' alt="Edit">Edit</a>
+                                <a class="btn btn-default btn-sm" href='https://localhost:44372/Orders/Details/${item.OrderId}' alt="details">Details</a>
+                                <a class="btn btn-danger btn-sm" href='https://localhost:44372/Orders/Delete/${item.OrderId}' alt="Delete">Del</a>
                             </td>
                         </tr >
                     `).join("")

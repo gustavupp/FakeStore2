@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewBag.Title = "Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--Datatables-->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+
+
+<h2>@ViewBag.Title</h2>
+<br/>
+<br />
+<div>
+    <table class="table table-responsive table-hover" id="my-datatable">
+        <thead class="bg-info" style="background-color: #f6f6f6; color:dimgrey">
+            <tr>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="js-costumer-table-body">
+            <!--Table body dynamically rendered-->
+        </tbody>
+    </table>
+</div>
+<a class="btn-"></a>
+<br/>
+<a>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
+</a>
+
+
+@section scripts{
+    <!--Datatables-->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            $('#my-datatable').DataTable({
+                ajax: {
+                    url: "https://localhost:44372/api/orders/all",
+                    dataSrc: ''
+                },
+                columns: [
+                    { data:'OrderDate' },
+                    {
+                        "render": function (data, type, full, meta) {
+                            console.log(full)
+                            return '$' + full.Total
+                        }
+                    },
+                    { data: 'CostumerName' },
+                    {
+                        "render": function (data, type, full, meta) {
+                            return `
+                                <a class="btn btn-default btn-sm" href="https://localhost:44372/Orders/Edit/${full.OrderId}">Edit</a> 
+                                <a class="btn btn-default btn-sm" href="https://localhost:44372/Orders/Details/${full.OrderId}">Details</a>
+                                <a class="btn btn-danger btn-sm" href="https://localhost:44372/Orders/Delete/${full.OrderId}">Del</a>
+                                `;
+                        }
+                    }
+                ]
+            });
+        });
+
+    </script>
+}

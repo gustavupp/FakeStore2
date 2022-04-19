@@ -21,6 +21,26 @@ namespace FakeStore2.Controllers
         }
 
 
+        //get all orders for datatable
+        [HttpGet]
+        [Route("api/orders/all")]
+        public JsonResult AllOrders()
+        {
+            var allOrders = _context.Orders
+                .Include(o => o.Costumer)
+                .Select(o => new OrdersModel()
+                {
+                    CostumerId = o.CostumerId,
+                    OrderDate = o.OrderDate.ToString(),
+                    OrderId = o.OrderId,
+                    Total = o.Total,
+                    CostumerName = o.Costumer.FirstName,
+                })
+                .ToList();
+
+            return Json(allOrders, JsonRequestBehavior.AllowGet);
+        }
+
         //Get Orders of given customer: Api/Orders/Id
         [HttpGet]
         [Route("api/orders/{id?}")]
