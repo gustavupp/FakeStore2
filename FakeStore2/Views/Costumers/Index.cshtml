@@ -40,9 +40,9 @@
             @Html.DisplayFor(modelItem => item.CostumerSince)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CostumerId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CostumerId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CostumerId })
+            @Html.ActionLink("Edit", "Edit", new { id = item.CostumerId }, htmlAttributes: new { @class="btn btn-sm btn-default"})
+            @Html.ActionLink("Details", "Details", new { id=item.CostumerId }, htmlAttributes: new { @class = "btn btn-sm btn-default" })
+            @Html.ActionLink("Delete", "Delete", new { id=item.CostumerId }, htmlAttributes: new { @class = "btn btn-sm btn-danger" })
         </td>
     </tr>
 }

@@ -34,9 +34,9 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.isActive, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <div class="checkbox">
+        <div class="col-md-10" style="display: flex">
+            @Html.LabelFor(model => model.isActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="checkbox" style="margin-left: 15px">
                 @Html.ValidationMessageFor(model => model.isActive, "", new { @class = "text-danger" })
                 @Html.EditorFor(model => model.isActive)
             </div>
