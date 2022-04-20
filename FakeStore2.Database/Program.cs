@@ -12,7 +12,7 @@ namespace FakeStore2.Database
     internal class Program
     {
 
-        private static string connectionString = "data source = (localdb)\\MSSQLLocalDB;initial catalog = FakeStore2; integrated security = True; MultipleActiveResultSets=True;App=EntityFramework";
+        readonly static string connectionString = "data source = (localdb)\\MSSQLLocalDB;initial catalog = FakeStore2; integrated security = True; MultipleActiveResultSets=True;App=EntityFramework";
         private static IServiceProvider CreateServices()
         {
             return new ServiceCollection()
@@ -30,7 +30,7 @@ namespace FakeStore2.Database
             var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
             runner.MigrateUp();
         }
-        static void Main(string[] args)
+        static void Main()
         {
             var serviceProvider = CreateServices();
             using (var scope = serviceProvider.CreateScope())

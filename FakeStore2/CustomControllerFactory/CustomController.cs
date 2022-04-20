@@ -1,11 +1,14 @@
 ﻿using Autofac;
 using FakeStore2.Persistence;
 using FakeStore2.Persistence.Interfaces;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using static FakeStore2.Reads.Customer.GetAllCustomers;
 
 namespace FakeStore2.CustomController
 {
@@ -14,15 +17,41 @@ namespace FakeStore2.CustomController
     {
         protected override IController GetControllerInstance(System.Web.Routing.RequestContext requestContext, Type controllerType)
         {
-            //autofac setup 
+
+            /*****************************************************/
             ContainerBuilder builder = new ContainerBuilder();
+
+            builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly)
+            .AsImplementedInterfaces();
+
+            // Register all the Command classes (they implement IRequestHandler)
+            // in assembly holding the Commands
+            builder.RegisterAssemblyTypes(typeof(Query).GetTypeInfo().Assembly)
+                    .AsClosedTypesOf(typeof(IRequestHandler<,>));
+
+            builder.RegisterType<FakeStore2Entities>().As<IFakeStore2Entities>();
+
+            builder.Register<ServiceFactory>(ctx =>
+            {
+                var c = ctx.Resolve<IComponentContext>();
+                return t => c.Resolve(t);
+            });
+
+            var container = builder.Build();
+            var mediator = container.Resolve<IMediator>();
+
+            /*****************************************************/
+
+            /*//autofac setup 
+            ContainerBuilder builder = new ContainerBuilder();
+
             builder.RegisterType<FakeStore2Entities>().As<IFakeStore2Entities>();
             var Container = builder.Build();
 
-            //isntead of manually instanciate FakeStire2Entities, let autofac do that for you.
-            var context = Container.Resolve<IFakeStore2Entities>();
+            //isntead of manually instanciate FakeStore2Entities, let autofac do that for you.
+            var context = Container.Resolve<IFakeStore2Entities>();*/
 
-            IController controller = Activator.CreateInstance(controllerType, new[] { context }) as Controller;
+            IController controller = Activator.CreateInstance(controllerType, new[] { mediator }) as Controller;
             return controller;
         }
     }

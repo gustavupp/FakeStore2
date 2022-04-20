@@ -1,105 +1,38 @@
-﻿using FakeStore2.Models;
-using FakeStore2.Persistence;
-using FakeStore2.Persistence.Interfaces;
-using FakeStore2.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿
+using FakeStore2.Queries.Api;
+using MediatR;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace FakeStore2.Controllers
 {
     public class ApiController : Controller
     {
-        private readonly IFakeStore2Entities _context;
 
-        public ApiController(IFakeStore2Entities context)
+        private readonly IMediator _mediator;
+
+        public ApiController(IMediator mediator)
         {
-            _context = context;
+            _mediator = mediator;
         }
-
 
         //get all orders for datatable
         [HttpGet]
         [Route("api/orders/all")]
-        public JsonResult AllOrders()
+        public async Task<JsonResult> AllOrders()
         {
-            var allOrders = _context.Orders
-                .Include(o => o.Costumer)
-                .Select(o => new OrdersModel()
-                {
-                    CostumerId = o.CostumerId,
-                    OrderDate = o.OrderDate.ToString(),
-                    OrderId = o.OrderId,
-                    Total = o.Total,
-                    CostumerName = o.Costumer.FirstName,
-                })
-                .ToList();
-
-            return Json(allOrders, JsonRequestBehavior.AllowGet);
+            var response = await _mediator.Send(new GetAllOrders.Query());
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         //Get Orders of given customer: Api/Orders/Id
         [HttpGet]
         [Route("api/orders/{id?}")]
-        public JsonResult Orders(int? id, int startRow = 0, int amountOfRows = 10, string searchInput = "")
+        public async Task<JsonResult> Orders(int? id, int startRow = 0, int amountOfRows = 10, string searchInput = "")
         {
-            if (startRow < 0) return Json(new {value = 0});
-
-            if (id.HasValue)
-            {
-                //converts the db object into a Model class before sending it to front end
-                var orders = _context.Orders
-                    .Where(o => o.CostumerId == id && (o.Costumer.FirstName.Contains(searchInput) ||
-                     o.Total.ToString().Contains(searchInput)))
-                    .OrderBy(o => o.OrderId)
-                    .Skip(startRow)
-                    .Take(amountOfRows)
-                    .Select(o => new OrdersModel()
-                    {
-                        CostumerId = o.CostumerId,
-                        OrderDate = o.OrderDate.ToString(),
-                        OrderId = o.OrderId,
-                        Total = o.Total,
-                        CostumerName = o.Costumer.FirstName,
-                    })
-                    .ToList();
-
-                var costumerOrdersCount = _context.Orders.Where(o => o.CostumerId == id).Count();
-                var numberOfPages = Math.Ceiling((double)costumerOrdersCount / amountOfRows);
-                //return numberOfPages and orders
-                return Json(new {orders, numberOfPages}, JsonRequestBehavior.AllowGet);
-            }
-
-            else
-            {
-                var ordersWithoutPagination = _context.Orders
-                    .Where(o => (o.Costumer.FirstName.Contains(searchInput)) ||
-                     o.Total.ToString().Contains(searchInput)).ToList();
-
-                var orders = ordersWithoutPagination.OrderBy(o => o.OrderId)
-                    .Skip(startRow)
-                    .Take(amountOfRows)
-                    .Select(o => new OrdersModel()
-                    {
-                        CostumerId = o.CostumerId,
-                        OrderDate = o.OrderDate.ToString(),
-                        OrderId = o.OrderId,
-                        Total = o.Total,
-                        CostumerName = o.Costumer.FirstName,
-                    });
-
-                var numberOfPages = Math.Ceiling((double)ordersWithoutPagination.Count() / amountOfRows);
-
-                //return numberOfPages and orders
-                return Json(new { orders, numberOfPages }, JsonRequestBehavior.AllowGet);
-            }
-            
+            var response = await _mediator.Send(new GetCustomerOrders.Query(id,startRow, amountOfRows,searchInput));
+            return Json(new { response.Orders, response.NumberOfPages }, JsonRequestBehavior.AllowGet);
         }
-
+            
     }
-
-    
 }

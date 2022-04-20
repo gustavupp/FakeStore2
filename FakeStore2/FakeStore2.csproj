@@ -49,11 +49,17 @@
     <Reference Include="Autofac, Version=6.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.6.3.0\lib\netstandard2.0\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Autofac.Integration.Mvc, Version=6.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Mvc5.6.0.0\lib\net472\Autofac.Integration.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="MediatR, Version=9.0.0.0, Culture=neutral, PublicKeyToken=bb9a41a5e8aaa7e2, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediatR.9.0.0\lib\net461\MediatR.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -160,8 +166,21 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CustomerModel.cs" />
+    <Compile Include="Models\OrdersAndPagesModel.cs" />
     <Compile Include="Models\OrdersModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\Api\GetAllOrders.cs" />
+    <Compile Include="Queries\Api\GetCustomerOrders.cs" />
+    <Compile Include="Queries\Customer\GetAllCustomers.cs" />
+    <Compile Include="Queries\Customer\GetCustomerDetails.cs" />
+    <Compile Include="Queries\Customer\GetDeletingCustomer.cs" />
+    <Compile Include="Queries\Customer\GetEditingCustomer.cs" />
+    <Compile Include="Queries\Orders\GetAllOrders.cs" />
+    <Compile Include="Queries\Orders\GetCustomerOrder.cs" />
+    <Compile Include="Queries\Orders\GetDeletingOrder.cs" />
+    <Compile Include="Queries\Orders\GetEditingOrder.cs" />
+    <Compile Include="Queries\Orders\GetOrderDetails.cs" />
+    <Compile Include="ViewModel\OrderAndCustomerListViewModel.cs" />
     <Compile Include="ViewModel\OrdersViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -219,6 +238,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Commands\Customer\" />
+    <Folder Include="Commands\Orders\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

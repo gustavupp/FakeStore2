@@ -187,3 +187,8 @@ D:\CODE\FakeStore2\FakeStore2\bin\System.Memory.xml
 D:\CODE\FakeStore2\FakeStore2\bin\System.Numerics.Vectors.xml
 D:\CODE\FakeStore2\FakeStore2\bin\System.Runtime.CompilerServices.Unsafe.xml
 D:\CODE\FakeStore2\FakeStore2\bin\System.Threading.Tasks.Extensions.xml
+D:\CODE\FakeStore2\FakeStore2\bin\MediatR.dll
+D:\CODE\FakeStore2\FakeStore2\bin\MediatR.xml
+D:\CODE\FakeStore2\FakeStore2\bin\Autofac.Integration.Mvc.dll
+D:\CODE\FakeStore2\FakeStore2\bin\Autofac.Integration.Mvc.pdb
+D:\CODE\FakeStore2\FakeStore2\bin\Autofac.Integration.Mvc.xml

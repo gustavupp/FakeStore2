@@ -9,6 +9,10 @@ using System.Web.Mvc;
 using FakeStore2.Models;
 using FakeStore2.Persistence;
 using FakeStore2.Persistence.Interfaces;
+using FakeStore2.Reads.Customer;
+using MediatR;
+using System.Threading.Tasks;
+using FakeStore2.Queries.Customer;
 
 namespace FakeStore2.Controllers
 {
@@ -21,61 +25,42 @@ namespace FakeStore2.Controllers
             this._context = context;
         }
 
-        // GET: Costumers
-        [HttpGet]
-        public ActionResult Index()
-        {
-            var costumers = _context.Costumers
-                .Include(c => c.Orders)
-                .Select(c => new CustomerModel()
-                {
-                    CostumerId = c.CostumerId,
-                    CostumerSince = c.CostumerSince.ToString(),
-                     FirstName = c.FirstName,
-                     LastName = c.LastName,
-                     isActive = c.isActive,
-                     Orders = c.Orders,
-                     OrdersCount = c.Orders.Count(),
-                })
-                .ToList();
+        private readonly IMediator _mediator;
 
-            return View(costumers);
+        public CostumersController(IMediator mediator)
+        {
+            _mediator = mediator;
         }
 
-        // GET: Costumers/Details/5
+        //GET: /Customers
         [HttpGet]
-        public ActionResult Details(int? id)
+        public async Task<ActionResult> Index()
         {
-            if (id == null)
+            var response = await _mediator.Send(new GetAllCustomers.Query());
+            return View(response);
+        }
+
+
+        //GET: /Costumers/Details/1
+        [HttpGet]
+        public async Task<ActionResult> Details(int id)
+        {
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var costumer = _context.Costumers
-                .Where(c => c.CostumerId == id)
-                .Select(c => new CustomerModel()
-                {
-                    CostumerId = c.CostumerId,
-                    CostumerSince = c.CostumerSince.ToString(),
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    isActive = c.isActive,
-                    OrdersCount = c.Orders.Count()
-                })
-                .FirstOrDefault();
-
-            if (costumer == null)
-            {
-                return HttpNotFound();
-            }
-            return View(costumer);
+            var response = await _mediator.Send(new GetCustomerDetails.Query(id));
+            return View(response);
         }
+
 
         // GET: Costumers/Create
         public ActionResult Create()
         {
             return View();
         }
+
 
         // POST: Costumers/Create
         [HttpPost]
@@ -97,34 +82,18 @@ namespace FakeStore2.Controllers
             }
         }
 
+
         // GET: Costumers/Edit/5
         [HttpGet]
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var costumer = _context.Costumers
-                .Where(c => c.CostumerId == id)
-                .Select(c => new CustomerModel() 
-                {
-                    CostumerId = c.CostumerId,
-                    CostumerSince = c.CostumerSince.ToString(),
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    isActive = c.isActive,
-                    Orders = c.Orders,
-                })
-                .FirstOrDefault();
-
-
-            if (costumer == null)
-            {
-                return HttpNotFound();
-            }
-            return View(costumer);
+            var response = await _mediator.Send(new GetEditingCustomer.Query(id));
+            return View(response);
         }
 
         // POST: Costumers/Edit/5
@@ -151,32 +120,17 @@ namespace FakeStore2.Controllers
         }
 
         // GET: Costumers/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var costumer = _context.Costumers
-                .Where(c => c.CostumerId == id)
-                .Select(c => new CustomerModel()
-                {
-                    CostumerId = c.CostumerId,
-                    CostumerSince = c.CostumerSince.ToString(),
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    isActive = c.isActive,
-                    OrdersCount = c.Orders.Count()
-                })
-                .FirstOrDefault();
-
-            if (costumer == null)
-            {
-                return HttpNotFound();
-            }
-            return View(costumer);
+            var response = await _mediator.Send(new GetDeletingCustomer.Query(id));
+            return View(response);
         }
+
 
         // POST: Costumers/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -196,13 +150,13 @@ namespace FakeStore2.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        protected override void Dispose(bool disposing)
+        /*protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 _context.Dispose();
             }
             base.Dispose(disposing);
-        }
+        }*/
     }
 }

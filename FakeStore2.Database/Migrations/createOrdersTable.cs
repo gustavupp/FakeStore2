@@ -4,7 +4,7 @@
 namespace FakeStore2.Database.Migrations
 { 
     [Migration(202204100600, "Create Orders Table")]
-public class createOrdersTable : ForwardOnlyMigration
+public class CreateOrdersTable : ForwardOnlyMigration
 {
     public override void Up()
     {

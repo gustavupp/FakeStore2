@@ -101,14 +101,14 @@
                 search.addEventListener('keyup', function () {
                     fetchOrders(`${url}/${dropdownList.value}?searchInput=${search.value}`).then(data => {
                         console.log(data)
-                        jsTable.innerHTML = tableContents(data.orders);
+                        jsTable.innerHTML = tableContents(data.Orders);
                         btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
                         addEventListenerToPaginationBtns();
                     })
                 })
             };
 
-            //declare function that generate and sets up pagination's logic and btns
+            //function that generate and sets up pagination's logic and btns
             const addEventListenerToPaginationBtns = () => {
                 btnsContainer.querySelectorAll('.page-btn')
                     .forEach(btn => {
@@ -117,7 +117,7 @@
 
                             fetchOrders(`${url}/${dropdownList.value}?searchInput=${search.value}&startRow=${startRow}&amountOfRows=${amountOfRows}`)
                                 .then(data => {
-                                    jsTable.innerHTML = tableContents(data.orders);
+                                    jsTable.innerHTML = tableContents(data.Orders);
                                 });
                         })
                     });
@@ -126,8 +126,8 @@
 
             //call fetchOrders without id to get all orders as soon as DOM loads
             fetchOrders(`${url}?startRow=${startRow}&amountOfRows=${amountOfRows}`).then(data => {
-                jsTable.innerHTML = tableContents(data.orders);
-                btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
+                jsTable.innerHTML = tableContents(data.Orders);
+                btnsContainer.innerHTML = paginationBtns(data.NumberOfPages);
 
                 searchInputFunction();
                 addEventListenerToPaginationBtns();
@@ -136,9 +136,9 @@
                 dropdownList.addEventListener("change", function () {
                     startRow = 0;
                     fetchOrders(`${url}/${dropdownList.value}?searchInput=${search.value}&startRow=${startRow}&amountOfRows=${amountOfRows}`).then(data => {
-                        const { orders } = data;
-                        jsTable.innerHTML = orders.length > 0 ? tableContents(orders) : "<br/><p class='text-center'>Costumer hasn't placed any orders yet.</p>";
-                        btnsContainer.innerHTML = paginationBtns(data.numberOfPages);
+                        const { Orders } = data;
+                        jsTable.innerHTML = Orders.length > 0 ? tableContents(Orders) : "<br/><p class='text-center'>Costumer hasn't placed any orders yet.</p>";
+                        btnsContainer.innerHTML = paginationBtns(data.NumberOfPages);
 
                         searchInputFunction();
                         addEventListenerToPaginationBtns();

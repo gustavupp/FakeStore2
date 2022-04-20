@@ -4,12 +4,15 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using FakeStore2.Models;
 using FakeStore2.Persistence;
 using FakeStore2.Persistence.Interfaces;
+using FakeStore2.Queries.Orders;
 using FakeStore2.ViewModel;
+using MediatR;
 
 namespace FakeStore2.Controllers
 {
@@ -22,93 +25,57 @@ namespace FakeStore2.Controllers
             _context = context;
         }
 
+        private readonly IMediator _mediator;
+
+        public OrdersController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+
+        //GET: /Customers
+        [HttpGet]
+        public async Task<ActionResult> Index()
+        {
+            var response = await _mediator.Send(new GetAllOrders.Query());
+            return View(response);
+        }
+
+        //Get: /Orders/Datatable
         public ActionResult Datatable()
         {
             return View(nameof(Datatable));
         }
 
-        // GET: All Orders
-        public ActionResult Index()
-        {
-            var orders = _context.Orders
-                .Include(o => o.Costumer)
-                .Select(o => new Models.OrdersModel() 
-            {
-            CostumerName = o.Costumer.FirstName,
-            CostumerId = o.CostumerId,
-            OrderDate = o.OrderDate.ToString(),
-            OrderId = o.OrderId,
-            Total = o.Total,
-            })
-                .ToList();
 
-            var costumers = _context.Costumers
-                .Include(c => c.Orders)
-                .Select(c => new CustomerModel()
-                { 
-                FirstName = c.FirstName,
-                LastName = c.LastName,
-                CostumerId = c.CostumerId,
-                CostumerSince = c.CostumerSince.ToString(),
-                isActive = c.isActive,
-                })
-                .ToList();
-
-            var orderViewModel = new OrdersViewModel()
-            {
-                Costumers = costumers,
-                Orders = orders
-            };
-
-            return View(orderViewModel);
-        }
 
         // GET: Orders/CostumerOrders/Id
         [HttpGet]
-        public ActionResult CostumerOrders(int id)
+        public async Task<ActionResult> CostumerOrders(int id)
         {
-                var orders = _context.Orders
-                .Where(o => o.CostumerId == id)
-                .Select(o => new OrdersModel()
-                {
-                    CostumerName = o.Costumer.FirstName,
-                    CostumerId = o.CostumerId,
-                    OrderDate = o.OrderDate.ToString(),
-                    OrderId = o.OrderId,
-                    Total = o.Total,
-                })
-                .ToList();
-
-                return View(orders);
-        }
-
-       
-
-        // GET: Orders/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var order = _context.Orders
-                .Where(o => o.OrderId == id)
-                .Select(o => new OrdersModel() 
-                {
-                    CostumerName = o.Costumer.FirstName,
-                    CostumerId = o.CostumerId,
-                    OrderDate = o.OrderDate.ToString(),
-                    OrderId = o.OrderId,
-                    Total = o.Total,
-                })
-                .SingleOrDefault(); ;
 
-            if (order == null)
+            var response = await _mediator.Send(new GetCustomerOrder.Query(id));
+
+            if (response == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+
+            return View(response);
         }
+
+
+        // GET: Orders/Details/5
+        public async Task<ActionResult> Details(int id)
+        {
+            var response = await _mediator.Send(new GetOrderDetails.Query(id));
+            return View(response);
+        }
+
 
         // GET: Orders/Create
         public ActionResult Create()
@@ -135,36 +102,25 @@ namespace FakeStore2.Controllers
             return View();
         }
 
-        // GET: Orders/Edit/5
-        public ActionResult Edit(int? id)
+
+        // GET: Orders/Details/5
+        public async Task<ActionResult> Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var order = _context.Orders
-                .Where(o => o.OrderId == id)
-                .Select(o => new OrdersModel()
-                {
-                    CostumerName = o.Costumer.FirstName,
-                    CostumerId = o.CostumerId,
-                    OrderDate = o.OrderDate.ToString(),
-                    OrderId = o.OrderId,
-                    Total = o.Total,
-                }
-                ).FirstOrDefault();
+            var response = await _mediator.Send(new GetEditingOrder.Query(id));
 
-
-            if (order == null)
-
+            if (response == null)
             {
                 return HttpNotFound();
             }
 
-            ViewBag.CostumerId = new SelectList(_context.Costumers, "CostumerId", "FirstName", order.CostumerId);
-            return View(order);
+            return View(response);
         }
+
 
         // POST: Orders/Edit/5
         [HttpPost]
@@ -187,32 +143,25 @@ namespace FakeStore2.Controllers
             return View(order);
         }
 
+
         // GET: Orders/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var order = _context.Orders
-                .Where(o => o.OrderId == id)
-                .Select(o => new OrdersModel()
-                {
-                    OrderId = o.OrderId,
-                    CostumerName = o.Costumer.FirstName,
-                    CostumerId= o.CostumerId,
-                    OrderDate= o.OrderDate.ToString(),
-                    Total = o.Total,
-                    })
-                .FirstOrDefault();
+            var response = await _mediator.Send(new GetDeletingOrder.Query(id));
 
-            if (order == null)
+            if (response == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+
+            return View(response);
         }
+
 
         // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -226,14 +175,14 @@ namespace FakeStore2.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        protected override void Dispose(bool disposing)
+       /* protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 _context.Dispose();
             }
             base.Dispose(disposing);
-        }
+        }*/
 
     }
 }
