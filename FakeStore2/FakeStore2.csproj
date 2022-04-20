@@ -158,6 +158,9 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Commands\Customer\AddCustomer.cs" />
+    <Compile Include="Commands\Customer\DeleteCustomer.cs" />
+    <Compile Include="Commands\Customer\EditCustomer.cs" />
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\CostumersController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
@@ -238,7 +241,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Commands\Customer\" />
     <Folder Include="Commands\Orders\" />
   </ItemGroup>
   <ItemGroup>

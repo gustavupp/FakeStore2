@@ -13,17 +13,12 @@ using FakeStore2.Reads.Customer;
 using MediatR;
 using System.Threading.Tasks;
 using FakeStore2.Queries.Customer;
+using FakeStore2.Commands.Customer;
 
 namespace FakeStore2.Controllers
 {
     public class CostumersController : Controller
     {
-        private readonly IFakeStore2Entities _context;
-
-        public CostumersController(IFakeStore2Entities context)
-        {
-            this._context = context;
-        }
 
         private readonly IMediator _mediator;
 
@@ -56,6 +51,7 @@ namespace FakeStore2.Controllers
 
 
         // GET: Costumers/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -65,20 +61,17 @@ namespace FakeStore2.Controllers
         // POST: Costumers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Costumer costumer)
+        public async Task<ActionResult> Create(Costumer customer)
         {
             //ModelState.IsValid checks if the object passed in matches the expected object
             if (!ModelState.IsValid)
             {
-                return View(costumer);
+                return View(customer);
             }
-            
             else
             {
-                _context.Costumers.Add(costumer);
-                _context.SaveChanges();
-
-                return RedirectToAction(nameof(Index));
+               var response = _mediator.Send(new AddCustomer.Command(customer));
+               return RedirectToAction(nameof(Index));
             }
         }
 
@@ -99,27 +92,19 @@ namespace FakeStore2.Controllers
         // POST: Costumers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Costumer costumer)
+        public ActionResult Edit(Costumer customer)
         {
             if (ModelState.IsValid)
             {
-                // _context.Entry(costumer).State = EntityState.Modified;
-                var editingCostumer = _context.Costumers
-                     .Where(c => c.CostumerId == costumer.CostumerId)
-                     .FirstOrDefault();
-                    
-                editingCostumer.FirstName = costumer.FirstName;
-                editingCostumer.LastName = costumer.LastName;
-                editingCostumer.isActive = costumer.isActive;
-                editingCostumer.CostumerSince = costumer.CostumerSince;
-
-                _context.SaveChanges();
+                var response = _mediator.Send(new EditCustomer.Command(customer));
                 return RedirectToAction(nameof(Index));
             }
-            return View(costumer);
+
+            return View(customer);
         }
 
         // GET: Costumers/Delete/5
+        [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
             if (id == 0)
@@ -135,28 +120,12 @@ namespace FakeStore2.Controllers
         // POST: Costumers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Costumer costumer = _context.Costumers.Find(id);
 
-            bool hasOrders = _context.Orders.Any(o => o.Costumer.CostumerId == id);
-
-            var allCostumerOrders = _context.Orders.Where(o => o.CostumerId == id).ToList();
-            allCostumerOrders.ForEach(o => _context.Orders.Remove(o));
-            _context.Costumers.Remove(costumer); 
-
-            _context.SaveChanges();
-
+            var response = _mediator.Send(new DeleteCustomer.Command(id));
             return RedirectToAction(nameof(Index));
         }
 
-        /*protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
-            base.Dispose(disposing);
-        }*/
     }
 }
