@@ -14,7 +14,7 @@ namespace FakeStore2.Queries.Orders
 {
     public static class GetEditingOrder
     {
-        public class Query : IRequest<OrderAndCustomerListViewModel>
+        public class Query : IRequest<OrdersModel>
         {
             public int _Id { get; }
             public Query(int Id)
@@ -23,7 +23,7 @@ namespace FakeStore2.Queries.Orders
             }
         }
 
-        public class Handler : IRequestHandler<Query, OrderAndCustomerListViewModel>
+        public class Handler : IRequestHandler<Query, OrdersModel>
         {
             private readonly IFakeStore2Entities _context;
 
@@ -32,7 +32,7 @@ namespace FakeStore2.Queries.Orders
                 _context = context;
             }
 
-            public async Task<OrderAndCustomerListViewModel> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<OrdersModel> Handle(Query request, CancellationToken cancellationToken)
             {
                 var order = _context.Orders
                 .Where(o => o.OrderId == request._Id)
@@ -46,21 +46,7 @@ namespace FakeStore2.Queries.Orders
                 })
                 .FirstOrDefault(); ;
 
-                var customerList = _context.Costumers
-                    .Select(c => new CustomerModel()
-                {
-                        FirstName = c.FirstName,
-                        CostumerId = c.CostumerId,
-                })
-                    .ToList();
-
-                var orderAndCustomersList = new OrderAndCustomerListViewModel()
-                {
-                    Customers = customerList,
-                    Order = order,
-                };
-
-                return orderAndCustomersList == null ? null : orderAndCustomersList;
+                return order == null ? null : order;
             }
 
         }

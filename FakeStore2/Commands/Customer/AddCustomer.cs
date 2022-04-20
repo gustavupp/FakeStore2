@@ -36,7 +36,7 @@ namespace FakeStore2.Commands.Customer
                 _context.Costumers.Add(request._customer);
                 _context.SaveChanges();
 
-                var addedCustomer = _context.Costumers.Where(c => c.CostumerId == request._customer.CostumerId).FirstOrDefault();
+                var addedCustomer = _context.Costumers.LastOrDefault();
 
                 return addedCustomer == null ? null : addedCustomer;
             }

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
+﻿
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using FakeStore2.Commands.Orders;
 using FakeStore2.Models;
 using FakeStore2.Persistence;
 using FakeStore2.Persistence.Interfaces;
 using FakeStore2.Queries.Orders;
+using FakeStore2.Reads.Customer;
 using FakeStore2.ViewModel;
 using MediatR;
 
@@ -18,20 +16,12 @@ namespace FakeStore2.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly IFakeStore2Entities _context;
-
-        public OrdersController(IFakeStore2Entities context)
-        {
-            _context = context;
-        }
-
         private readonly IMediator _mediator;
 
         public OrdersController(IMediator mediator)
         {
             _mediator = mediator;
         }
-
 
         //GET: /Customers
         [HttpGet]
@@ -46,7 +36,6 @@ namespace FakeStore2.Controllers
         {
             return View(nameof(Datatable));
         }
-
 
 
         // GET: Orders/CostumerOrders/Id
@@ -70,6 +59,7 @@ namespace FakeStore2.Controllers
 
 
         // GET: Orders/Details/5
+        [HttpGet]
         public async Task<ActionResult> Details(int id)
         {
             var response = await _mediator.Send(new GetOrderDetails.Query(id));
@@ -78,10 +68,12 @@ namespace FakeStore2.Controllers
 
 
         // GET: Orders/Create
-        public ActionResult Create()
+        [HttpGet]
+        public async Task<ActionResult> Create()
         {
             //by using the ViewBag to send data to the View you don't have to create another class
-            ViewBag.CostumerId = new SelectList(_context.Costumers, "CostumerId", "FirstName");
+            var response = await _mediator.Send(new GetAllCustomers.Query());
+            ViewBag.CostumerId = new SelectList(response, "CostumerId", "FirstName");
 
             return View();
         }
@@ -89,13 +81,11 @@ namespace FakeStore2.Controllers
         // POST: Orders/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Order order)
+        public async Task<ActionResult> Create(Order order)
         {
             if (ModelState.IsValid)
             {
-                _context.Orders.Add(order);
-                _context.SaveChanges();
-
+                var response = await _mediator.Send(new AddOrder.Command(order));
                 return RedirectToAction(nameof(Index));
             }
 
@@ -103,7 +93,8 @@ namespace FakeStore2.Controllers
         }
 
 
-        // GET: Orders/Details/5
+        // GET: Orders/Edit/5
+        [HttpGet]
         public async Task<ActionResult> Edit(int id)
         {
             if (id == 0)
@@ -112,6 +103,8 @@ namespace FakeStore2.Controllers
             }
 
             var response = await _mediator.Send(new GetEditingOrder.Query(id));
+            var customerList = await _mediator.Send(new GetAllCustomers.Query());
+            ViewBag.CostumerId = new SelectList(customerList, "CostumerId", "FirstName");
 
             if (response == null)
             {
@@ -125,19 +118,11 @@ namespace FakeStore2.Controllers
         // POST: Orders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(OrdersModel order)
+        public async Task<ActionResult> Edit(OrdersModel order)
         {
             if (ModelState.IsValid)
             {
-
-                var editingOrder = _context.Orders.FirstOrDefault(o => o.OrderId == order.OrderId);
-
-                editingOrder.OrderDate = DateTime.Parse(order.OrderDate);
-                editingOrder.Total = order.Total;
-                editingOrder.CostumerId = order.CostumerId;
-
-                _context.SaveChanges();
-
+                var response = await _mediator.Send(new EditOrder.Command(order));
                 return RedirectToAction(nameof(Index));
             }
             return View(order);
@@ -145,11 +130,12 @@ namespace FakeStore2.Controllers
 
 
         // GET: Orders/Delete/5
+        [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
             if (id == 0)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                 new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             var response = await _mediator.Send(new GetDeletingOrder.Query(id));
@@ -166,23 +152,11 @@ namespace FakeStore2.Controllers
         // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Order order = _context.Orders.Find(id);
-            _context.Orders.Remove(order);
-            _context.SaveChanges();
-
+            var response = await _mediator.Send(new DeleteOrder.Command(id));
             return RedirectToAction(nameof(Index));
         }
-
-       /* protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
-            base.Dispose(disposing);
-        }*/
 
     }
 }
