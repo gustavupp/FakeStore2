@@ -33,7 +33,7 @@ namespace FakeStore2.Commands.Customer
 
             public async Task<Costumer> Handle(Command request, CancellationToken cancellationToken)
             {
-                _context.Costumers.Add(request._customer);
+                 _context.Costumers.Add(request._customer);
                 _context.SaveChanges();
 
                 var addedCustomer = _context.Costumers.LastOrDefault();

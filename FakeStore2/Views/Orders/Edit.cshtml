@@ -11,48 +11,70 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    <div class="form-horizontal">
+<div class="form-horizontal">
 
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.OrderId)
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.OrderId)
+   @* @Html.HiddenFor(model => model.CostumerId, htmlAttributes: new {@class="hiddenCustomerId", id="hiddenCustomerId"})*@
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.CostumerName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("CostumerId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.CostumerName, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.CostumerName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("CostumerId", null, htmlAttributes: new { @class = "form-control" })
+            @*@Html.EditorFor(model => model.CostumerName, new { htmlAttributes = new { @class = "form-control" } })*@
+            @Html.ValidationMessageFor(model => model.CostumerName, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.OrderDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.OrderDate, new { htmlAttributes = new {  @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.OrderDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.OrderDate, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Total, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Total, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Total, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Total, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Total, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Total, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group" style="display: flex;">
-            <div class="col-md-offset-2 col-md-1">
-                @Html.ActionLink("Back", "Index", null, htmlAttributes: new {@class="btn btn-default"})
-            </div>
-                <div>
-                    <input type="submit" value="Save" class="btn btn-primary" />
-                </div>
-            </div>
+    <div class="form-group" style="display: flex;">
+        <div class="col-md-offset-2 col-md-1">
+            @Html.ActionLink("Back", "Index", null, htmlAttributes: new { @class = "btn btn-default" })
         </div>
+        <div>
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </div>
+</div>
 }
 
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+       @* document.addEventListener('DOMContentLoaded', function () {
+            const dropdownList = document.getElementById('CostumerId');
+            const customerId = document.getElementById('hiddenCustomerId');
+
+            //set dropdownlist value to current editing customer
+            
+            dropdownList.value = customerId.value;
+            console.log({ dropdown: dropdownList.value, custumer: customerId.value })
+
+            dropdownList.addEventListener('change', function () {
+                dropdownList.value = this.value;
+                console.log(dropdownList.value)
+            })
+        })*@
+        
+
+    </script>
 }

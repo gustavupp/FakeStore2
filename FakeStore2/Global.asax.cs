@@ -24,14 +24,11 @@ namespace FakeStore2
             //register custom controller
             RegisterCustomControllerFactory();
 
-           
-
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
-
 
         //method to register custom controller
         private void RegisterCustomControllerFactory()

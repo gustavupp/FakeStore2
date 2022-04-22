@@ -104,7 +104,7 @@ namespace FakeStore2.Controllers
 
             var response = await _mediator.Send(new GetEditingOrder.Query(id));
             var customerList = await _mediator.Send(new GetAllCustomers.Query());
-            ViewBag.CostumerId = new SelectList(customerList, "CostumerId", "FirstName");
+            ViewBag.CostumerId = new SelectList(customerList, "CostumerId", "FirstName", response.CostumerId);
 
             if (response == null)
             {

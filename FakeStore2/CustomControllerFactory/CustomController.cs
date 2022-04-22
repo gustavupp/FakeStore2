@@ -42,15 +42,6 @@ namespace FakeStore2.CustomController
 
             /*****************************************************/
 
-            /*//autofac setup 
-            ContainerBuilder builder = new ContainerBuilder();
-
-            builder.RegisterType<FakeStore2Entities>().As<IFakeStore2Entities>();
-            var Container = builder.Build();
-
-            //isntead of manually instanciate FakeStore2Entities, let autofac do that for you.
-            var context = Container.Resolve<IFakeStore2Entities>();*/
-
             IController controller = Activator.CreateInstance(controllerType, new[] { mediator }) as Controller;
             return controller;
         }
